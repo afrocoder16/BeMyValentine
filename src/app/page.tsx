@@ -2,6 +2,7 @@ import Link from "next/link";
 import { templates } from "@/lib/templates";
 import { buttonClasses } from "@/components/Button";
 import TemplateCard from "@/components/TemplateCard";
+import LoveNotes from "@/components/LoveNotes";
 
 export default function Home() {
   return (
@@ -15,7 +16,7 @@ export default function Home() {
             Make a Valentine page in 60 seconds.
           </h1>
           <p className="mt-5 text-lg text-slate-600 md:text-xl">
-            Pick a template, add photos + music, share a link.
+            Design it your way with photos, words, and little surprises.
           </p>
           <p className="mt-3 text-sm text-slate-500">
             Free to preview. No login.
@@ -30,11 +31,6 @@ export default function Home() {
             >
               Start building
             </Link>
-          </div>
-          <div className="mt-4">
-            <button className="rounded-lg bg-pink-600 px-4 py-2 text-sm font-semibold text-white shadow">
-              Tailwind test
-            </button>
           </div>
         </div>
         <div className="glass-card rounded-[2.5rem] border-0 bg-white/60 p-6">
@@ -61,8 +57,8 @@ export default function Home() {
             text: "Choose a style that matches your story and vibe.",
           },
           {
-            title: "Add photos + music",
-            text: "Drop in your favorite moments and a soundtrack.",
+            title: "Make it yours",
+            text: "Edit the template, add photos, music, and words that feel like you.",
           },
           {
             title: "Get link + QR",
@@ -105,35 +101,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mt-20">
-        <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-400">
-              Loved by couples
-            </p>
-            <h2 className="mt-3 font-display text-3xl text-slate-900">
-              Social proof (placeholder).
-            </h2>
-          </div>
-        </div>
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
-          {[
-            "Placeholder quote about the sweetest reveal.",
-            "Placeholder note about how easy it was to build.",
-            "Placeholder praise for the templates and vibes.",
-          ].map((quote, index) => (
-            <div
-              key={quote}
-              className="rounded-3xl bg-white/80 p-6 shadow-soft"
-            >
-              <p className="text-sm text-slate-600">{quote}</p>
-              <p className="mt-4 text-xs uppercase tracking-[0.3em] text-slate-400">
-                Placeholder #{index + 1}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <LoveNotes />
 
       <section className="mt-20">
         <div className="rounded-[2.5rem] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-8 py-12 text-white shadow-soft">
