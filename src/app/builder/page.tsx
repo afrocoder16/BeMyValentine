@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { templates } from "@/lib/templates";
+import { getTemplateById } from "@/data/templates";
 import { buttonClasses } from "@/components/Button";
+import TemplatePhonePreview from "@/components/TemplatePhonePreview";
 
 type BuilderPageProps = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -12,9 +13,7 @@ export default async function BuilderPage({ searchParams }: BuilderPageProps) {
     typeof resolvedParams.template === "string"
       ? resolvedParams.template
       : null;
-  const selectedTemplate = templates.find(
-    (template) => template.id === templateId
-  );
+  const selectedTemplate = getTemplateById(templateId);
 
   if (!selectedTemplate) {
     return (
@@ -48,28 +47,24 @@ export default async function BuilderPage({ searchParams }: BuilderPageProps) {
             {selectedTemplate.name}
           </h1>
           <p className="mt-3 text-lg text-slate-600">
-            {selectedTemplate.vibe}
+            {selectedTemplate.vibeTagline}
           </p>
           <p className="mt-4 text-sm text-slate-600">
             {selectedTemplate.description}
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3 lg:justify-start">
-            <button className={buttonClasses("primary")} disabled>
+            <Link
+              href={`/preview/${selectedTemplate.id}`}
+              className={buttonClasses("primary")}
+            >
               Continue
-            </button>
+            </Link>
             <Link href="/templates" className={buttonClasses("ghost")}>
               Change template
             </Link>
           </div>
         </div>
-        <div className="glass-card rounded-[2.5rem] p-6">
-          <div className="rounded-[2rem] bg-white/80 p-6">
-            <div className="mx-auto h-[420px] w-[220px] rounded-[2.5rem] bg-gradient-to-br from-rose-200 via-amber-100 to-pink-200 shadow-soft" />
-            <p className="mt-4 text-center text-sm text-slate-500">
-              Preview placeholder (phone mock)
-            </p>
-          </div>
-        </div>
+        <TemplatePhonePreview template={selectedTemplate} />
       </section>
     </main>
   );

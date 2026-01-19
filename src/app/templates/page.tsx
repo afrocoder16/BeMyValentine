@@ -1,7 +1,9 @@
-import { templates } from "@/lib/templates";
+import { getTemplates } from "@/data/templates";
 import TemplateCard from "@/components/TemplateCard";
 
 export default function TemplatesPage() {
+  const templates = getTemplates();
+
   return (
     <main className="mx-auto w-full max-w-6xl px-6 pb-24 pt-16 md:pt-24">
       <section>

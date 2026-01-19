@@ -1,10 +1,12 @@
 import Link from "next/link";
-import { templates } from "@/lib/templates";
+import { getTemplates } from "@/data/templates";
 import { buttonClasses } from "@/components/Button";
 import TemplateCard from "@/components/TemplateCard";
 import LoveNotes from "@/components/LoveNotes";
 
 export default function Home() {
+  const templates = getTemplates();
+
   return (
     <main className="mx-auto w-full max-w-6xl px-6 pb-24 pt-16 md:pt-24">
       <section className="grid items-center gap-12 rounded-[3rem] bg-white/70 p-8 shadow-soft md:p-12 lg:grid-cols-[1.05fr_0.95fr]">
