@@ -39,3 +39,68 @@ a {
 summary::-webkit-details-marker {
   display: none;
 }
+
+.preview-font-classic {
+  --preview-display: var(--font-display);
+  --preview-body: var(--font-body);
+}
+
+.preview-font-soft {
+  --preview-display: var(--font-cormorant);
+  --preview-body: var(--font-body);
+}
+
+.preview-font-playful {
+  --preview-display: var(--font-dm-serif);
+  --preview-body: var(--font-body);
+}
+
+.preview-font-romantic {
+  --preview-display: var(--font-great-vibes);
+  --preview-body: var(--font-cormorant);
+}
+
+.preview-body {
+  font-family: var(--preview-body);
+}
+
+.preview-heading {
+  font-family: var(--preview-display);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(244, 63, 94, 0.35) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(244, 63, 94, 0.35);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@keyframes floaty {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.floaty {
+  animation: floaty 8s ease-in-out infinite;
+}

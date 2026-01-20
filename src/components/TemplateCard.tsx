@@ -27,10 +27,7 @@ export default function TemplateCard({ template, compact }: TemplateCardProps) {
           {template.description}
         </p>
         <div className="mt-5">
-          <Link
-            href={`/builder?template=${template.id}`}
-            className={buttonClasses("primary")}
-          >
+          <Link href={`/build/${template.id}`} className={buttonClasses("primary")}>
             Use template
           </Link>
         </div>

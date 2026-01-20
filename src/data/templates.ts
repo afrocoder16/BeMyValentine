@@ -1,5 +1,15 @@
+export const TEMPLATE_IDS = [
+  "cute-classic",
+  "midnight-muse",
+  "sunlit-picnic",
+  "garden-party",
+  "retro-love",
+] as const;
+
+export type TemplateId = (typeof TEMPLATE_IDS)[number];
+
 export type Template = {
-  id: string;
+  id: TemplateId;
   name: string;
   vibeTagline: string;
   description: string;
@@ -20,10 +30,10 @@ const templates: Template[] = [
   {
     id: "cute-classic",
     name: "Cute Classic",
-    vibeTagline: "Warm, playful, timeless.",
-    description: "Soft gradients, sweet captions, and a gentle story flow.",
+    vibeTagline: "Cute, goofy, totally smitten.",
+    description: "Playful prompts, meme-friendly moments, and big YES energy.",
     demo: {
-      caption: "Soft light, sweet notes, and a story that blooms.",
+      caption: "Cute chaos, meme energy, and a loud YES.",
       images: [
         "/demos/cute-classic/1.jpg",
         "/demos/cute-classic/2.jpg",
@@ -35,7 +45,7 @@ const templates: Template[] = [
       },
     },
     theme: {
-      gradient: "from-rose-300 via-pink-200 to-amber-100",
+      gradient: "from-rose-200 via-pink-100 to-amber-100",
     },
   },
   {
@@ -110,5 +120,5 @@ const templates: Template[] = [
 
 export const getTemplates = () => templates;
 
-export const getTemplateById = (id?: string | null) =>
+export const getTemplateById = (id?: TemplateId | string | null) =>
   templates.find((template) => template.id === id);

@@ -182,7 +182,7 @@ export default function TemplateDemoRenderer({
           Swap in your photos, your words, and the song that feels like you two.
         </p>
         <Link
-          href={`/builder/${template.id}`}
+          href={`/build/${template.id}`}
           className={`${buttonClasses("primary")} mt-6`}
         >
           Now make it yours

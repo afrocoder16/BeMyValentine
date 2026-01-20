@@ -27,10 +27,7 @@ export default function Home() {
             <Link href="/templates" className={buttonClasses("primary")}>
               Browse templates
             </Link>
-            <Link
-              href="/builder?template=cute-classic"
-              className={buttonClasses("outline")}
-            >
+            <Link href="/build/cute-classic" className={buttonClasses("outline")}>
               Start building
             </Link>
           </div>

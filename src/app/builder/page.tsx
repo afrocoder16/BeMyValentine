@@ -26,7 +26,7 @@ export default async function BuilderPage({ searchParams }: BuilderPageProps) {
             Choose a template to start building.
           </h1>
           <p className="mt-3 text-sm text-slate-600">
-            Pick a style and we will load the builder placeholder.
+            Pick a style and we will load the builder.
           </p>
           <Link href="/templates" className={`${buttonClasses("primary")} mt-6`}>
             Browse templates

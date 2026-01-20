@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
-import { Fraunces, Manrope } from "next/font/google";
+import {
+  Cormorant_Garamond,
+  DM_Serif_Display,
+  Fraunces,
+  Great_Vibes,
+  Manrope,
+} from "next/font/google";
 import "./globals.css";
 import LayoutShell from "@/components/LayoutShell";
 
@@ -11,6 +17,24 @@ const displayFont = Fraunces({
 const bodyFont = Manrope({
   variable: "--font-body",
   subsets: ["latin"],
+});
+
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  subsets: ["latin"],
+  weight: ["400", "600"],
+});
+
+const dmSerif = DM_Serif_Display({
+  variable: "--font-dm-serif",
+  subsets: ["latin"],
+  weight: "400",
+});
+
+const greatVibes = Great_Vibes({
+  variable: "--font-great-vibes",
+  subsets: ["latin"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -25,7 +49,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${displayFont.variable} ${bodyFont.variable}`}>
+      <body
+        className={`${displayFont.variable} ${bodyFont.variable} ${cormorant.variable} ${dmSerif.variable} ${greatVibes.variable}`}
+      >
         <LayoutShell>{children}</LayoutShell>
       </body>
     </html>

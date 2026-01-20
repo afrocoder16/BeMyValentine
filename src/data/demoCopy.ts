@@ -22,13 +22,13 @@ const demoCopyByTemplateId: Record<string, DemoCopy> = {
   "cute-classic": {
     title: "Will u be my Valentine?",
     intro:
-      "I made this little page for you, because loving you is my favorite thing.",
+      "I made this tiny page to ask a big question and offer snacks, memes, and hugs.",
     loveNote:
-      "From the first hello, you have been my safest place and my biggest smile. Thank you for the way you show up, the way you listen, and the way you love. I cannot wait for our next chapter together.",
+      "You are my favorite notification and my favorite laugh. Say yes and I will bring the cozy blanket, the popcorn, and the best playlist.",
     cuteMoments: [
-      "The quiet morning hugs that start everything right.",
-      "Your laugh when I say something ridiculous.",
-      "That look you give me when you are happy.",
+      "Your laugh when I do my dramatic voice.",
+      "The way you steal my fries and smile.",
+      "Our inside jokes that make no sense to anyone else.",
     ],
   },
   "midnight-muse": {

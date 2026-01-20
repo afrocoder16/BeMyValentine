@@ -10,7 +10,10 @@ type LayoutShellProps = {
 
 export default function LayoutShell({ children }: LayoutShellProps) {
   const pathname = usePathname();
-  const hideChrome = pathname?.startsWith("/builder");
+  const hideChrome =
+    pathname?.startsWith("/builder") ||
+    pathname?.startsWith("/build") ||
+    pathname?.startsWith("/v");
 
   return (
     <div className="relative min-h-screen bg-[#fff7f4] text-slate-900">

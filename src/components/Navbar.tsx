@@ -44,10 +44,7 @@ export default function Navbar() {
             );
           })}
         </nav>
-        <Link
-          href="/builder?template=cute-classic"
-          className={buttonClasses("outline")}
-        >
+        <Link href="/build/cute-classic" className={buttonClasses("outline")}>
           Start building
         </Link>
       </div>
