@@ -17,10 +17,13 @@ export type BuilderMusic = {
 
 export type BuilderDoc = {
   templateId: TemplateId;
+  tagline: string;
   title: string;
   subtitle: string;
   loveNote: string;
   loveNotes?: string[];
+  loveNoteTitles: string[];
+  momentsTitle: string;
   moments: string[];
   photos: BuilderPhoto[];
   music: BuilderMusic | null;

@@ -90,6 +90,9 @@ export default function MidnightMuseRenderer({
         : [];
   const isPhone = mode === "phone";
   const isPublished = context === "published";
+  const showTagline =
+    doc.tagline.trim().length > 0 &&
+    (!isPublished || doc.tagline.trim() !== theme.tagline.trim());
   const fontStyleClass = resolveFontClass(doc.selectedFont);
   const titleSizeClass = resolveTitleSizeClass(doc.titleSize);
   const backgroundOverlayClass = resolveBackgroundOverlayClass(
@@ -139,9 +142,11 @@ export default function MidnightMuseRenderer({
         }`}
       >
         <header className="text-center text-slate-100">
-          <p className="text-[0.6rem] font-semibold uppercase tracking-[0.4em] text-rose-200/80">
-            {theme.tagline}
-          </p>
+          {showTagline ? (
+            <p className="text-[0.6rem] font-semibold uppercase tracking-[0.4em] text-rose-200/80">
+              {doc.tagline}
+            </p>
+          ) : null}
           <h1 className={`preview-heading mt-4 ${titleSizeClass}`}>
             {doc.title}
           </h1>
@@ -197,21 +202,26 @@ export default function MidnightMuseRenderer({
 
           if (section === "love-note") {
             return (
-              <section key="love-note" className="mt-12 space-y-6">
+              <section key="love-note" className="mt-12 space-y-8">
                 {loveNotes.length > 0 ? (
-                  loveNotes.map((note, index) => (
-                    <div
-                      key={`love-note-${index}`}
-                      className="rounded-[2.5rem] bg-slate-900/70 p-8 text-center shadow-[0_18px_50px_-32px_rgba(15,23,42,0.9)] ring-1 ring-white/10"
-                    >
-                      <h2 className="preview-heading text-2xl text-slate-50 md:text-3xl">
-                        {index === 0 ? "Love note" : "Midnight echoes"}
-                      </h2>
-                      <p className="mt-4 text-sm text-slate-200 md:text-base">
-                        {note}
-                      </p>
-                    </div>
-                  ))
+                  loveNotes.map((note, index) => {
+                    const title =
+                      doc.loveNoteTitles?.[index]?.trim() ||
+                      (index === 0 ? "Love note" : "Midnight echoes");
+                    return (
+                      <div
+                        key={`love-note-${index}`}
+                        className="rounded-[2.5rem] bg-slate-900/70 p-8 text-center shadow-[0_18px_50px_-32px_rgba(15,23,42,0.9)] ring-1 ring-white/10"
+                      >
+                        <h2 className="preview-heading text-2xl text-slate-50 md:text-3xl">
+                          {title}
+                        </h2>
+                        <p className="mt-4 text-sm text-slate-200 md:text-base">
+                          {note}
+                        </p>
+                      </div>
+                    );
+                  })
                 ) : (
                   <div className="rounded-[2.5rem] bg-slate-900/70 p-8 text-center shadow-soft ring-1 ring-white/10">
                     <h2 className="preview-heading text-2xl text-slate-50 md:text-3xl">
@@ -232,7 +242,7 @@ export default function MidnightMuseRenderer({
               className="mt-10 rounded-[2.5rem] bg-slate-900/70 p-8 shadow-soft ring-1 ring-white/10"
             >
               <h2 className="preview-heading text-center text-2xl text-slate-50 md:text-3xl">
-                Cute moments
+                {doc.momentsTitle}
               </h2>
               <ul className="mt-4 space-y-2 text-sm text-slate-200 md:text-base">
                 {moments.map((moment, index) => (

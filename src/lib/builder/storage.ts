@@ -1,5 +1,9 @@
 import type { TemplateId } from "@/data/templates";
-import { getBuilderSettings, getDefaultBuilderDoc } from "@/lib/builder/config";
+import {
+  getBuilderSettings,
+  getDefaultBuilderDoc,
+  getDefaultLoveNoteTitle,
+} from "@/lib/builder/config";
 import type { BuilderDoc, BuilderMusic, BuilderPhoto } from "@/lib/builder/types";
 
 const storageKey = (templateId: TemplateId) => `bmv:builder:${templateId}`;
@@ -51,10 +55,13 @@ export const coerceBuilderDoc = (
   const loveNotes = Array.isArray(doc.loveNotes)
     ? doc.loveNotes.filter((note) => typeof note === "string")
     : [];
-  const loveNote =
-    typeof doc.loveNote === "string"
-      ? doc.loveNote
-      : loveNotes[0] ?? defaults.loveNote;
+  const loveNoteValue =
+    typeof doc.loveNote === "string" ? doc.loveNote : defaults.loveNote;
+  const normalizedLoveNotes =
+    loveNotes.length > 0 ? loveNotes : [loveNoteValue];
+  const loveNoteTitles = Array.isArray(doc.loveNoteTitles)
+    ? doc.loveNoteTitles.filter((title) => typeof title === "string")
+    : [];
   const sectionOrder = Array.isArray(doc.sectionOrder)
     ? doc.sectionOrder.filter(
         (section): section is "gallery" | "love-note" | "moments" =>
@@ -68,10 +75,18 @@ export const coerceBuilderDoc = (
 
   return {
     templateId,
+    tagline: typeof doc.tagline === "string" ? doc.tagline : defaults.tagline,
     title: typeof doc.title === "string" ? doc.title : defaults.title,
     subtitle: typeof doc.subtitle === "string" ? doc.subtitle : defaults.subtitle,
-    loveNote,
-    loveNotes: loveNotes.length > 0 ? loveNotes : defaults.loveNotes,
+    loveNote: normalizedLoveNotes[0] ?? defaults.loveNote,
+    loveNotes: normalizedLoveNotes,
+    loveNoteTitles: normalizedLoveNotes.map(
+      (_, index) => loveNoteTitles[index] ?? getDefaultLoveNoteTitle(templateId, index)
+    ),
+    momentsTitle:
+      typeof doc.momentsTitle === "string"
+        ? doc.momentsTitle
+        : defaults.momentsTitle,
     moments: Array.isArray(doc.moments)
       ? doc.moments.filter((moment) => typeof moment === "string")
       : defaults.moments,

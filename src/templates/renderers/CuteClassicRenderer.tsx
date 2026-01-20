@@ -58,7 +58,7 @@ function PreviewAudioControl({ title, src }: PreviewAudioControlProps) {
         type="button"
         onClick={handleToggle}
         aria-pressed={isPlaying}
-        className="rounded-full bg-sky-500 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-sky-400"
+        className="rounded-full bg-sky-500 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white shadow-[0_12px_30px_-18px_rgba(14,165,233,0.7)] ring-1 ring-white/80 transition hover:-translate-y-0.5 hover:bg-sky-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
       >
         {isPlaying ? "Pause" : "Play"}
       </button>
@@ -93,6 +93,9 @@ export default function CuteClassicRenderer({
         : [];
   const isPhone = mode === "phone";
   const isPublished = context === "published";
+  const showTagline =
+    doc.tagline.trim().length > 0 &&
+    (!isPublished || doc.tagline.trim() !== theme.tagline.trim());
   const fontStyleClass = resolveFontClass(doc.selectedFont);
   const titleSizeClass = resolveTitleSizeClass(doc.titleSize);
   const backgroundOverlayClass = resolveBackgroundOverlayClass(
@@ -115,6 +118,31 @@ export default function CuteClassicRenderer({
       ? doc.sectionOrder
       : ["gallery", "love-note", "moments"];
   const captionMoments = moments.slice(0, photos.length);
+  const [isYesAnimating, setIsYesAnimating] = useState(false);
+  const perkCards = [
+    {
+      title: "Snack mission",
+      body: "Crunchy, sweet, and extra napkins. We are prepared.",
+    },
+    {
+      title: "Playlist swap",
+      body: "You pick the mood. I queue the heart songs.",
+    },
+    {
+      title: "Hug voucher",
+      body: "Unlimited squeezes. Redeem any time you want.",
+    },
+    {
+      title: "Meme reserve",
+      body: "Curated chaos, saved just for us.",
+    },
+  ];
+  const sparkleWords = ["giddy", "smitten", "sparkly", "obsessed"];
+
+  const triggerYesAnimation = () => {
+    setIsYesAnimating(false);
+    requestAnimationFrame(() => setIsYesAnimating(true));
+  };
 
   return (
     <div
@@ -151,6 +179,25 @@ export default function CuteClassicRenderer({
         className="floaty absolute right-6 bottom-10 h-14 w-14 rounded-full bg-sky-200/70"
         style={{ animationDuration: "11s", animationDelay: "-1s" }}
       />
+      <span
+        aria-hidden="true"
+        className="twinkle absolute left-1/2 top-12 h-2 w-2 -translate-x-1/2 rounded-full bg-white/90"
+      />
+      <span
+        aria-hidden="true"
+        className="twinkle absolute left-16 top-44 h-3 w-3 rotate-45 rounded-[4px] bg-rose-200/90"
+        style={{ animationDelay: "-1.5s" }}
+      />
+      <span
+        aria-hidden="true"
+        className="twinkle absolute right-20 top-52 h-2.5 w-2.5 rotate-45 rounded-[4px] bg-amber-200/90"
+        style={{ animationDelay: "-0.8s" }}
+      />
+      <span
+        aria-hidden="true"
+        className="twinkle absolute left-24 bottom-32 h-2 w-2 rounded-full bg-rose-100/90"
+        style={{ animationDelay: "-2.2s" }}
+      />
 
       {isPublished ? null : (
         <div className="absolute right-6 top-6 z-10 rounded-full bg-white/80 px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-rose-500">
@@ -164,9 +211,11 @@ export default function CuteClassicRenderer({
         }`}
       >
         <header className="text-center text-slate-900">
-          <div className="mx-auto inline-flex items-center gap-3 rounded-full bg-white/80 px-5 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-rose-500 shadow-soft">
-            {theme.tagline}
-          </div>
+          {showTagline ? (
+            <div className="mx-auto inline-flex items-center gap-3 rounded-full bg-white/80 px-5 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-rose-500 shadow-soft">
+              {doc.tagline}
+            </div>
+          ) : null}
           <h1 className={`preview-heading mt-6 ${titleSizeClass}`}>
             {doc.title}
           </h1>
@@ -184,26 +233,86 @@ export default function CuteClassicRenderer({
 
         <section className="flex flex-col items-center gap-5 text-center">
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <div className="rounded-[2.5rem] bg-emerald-400 px-8 py-6 text-4xl font-bold uppercase tracking-[0.2em] text-white shadow-[0_25px_50px_-30px_rgba(16,185,129,0.8)]">
+            <button
+              type="button"
+              onClick={triggerYesAnimation}
+              onAnimationEnd={() => setIsYesAnimating(false)}
+              className={`rounded-[2.5rem] bg-emerald-400 px-8 py-6 text-4xl font-bold uppercase tracking-[0.2em] text-white shadow-[0_25px_50px_-30px_rgba(16,185,129,0.8)] transition hover:bg-emerald-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200 ${
+                isYesAnimating ? "yes-pop" : ""
+              }`}
+            >
               Yes
-            </div>
+            </button>
             <div className="rounded-full bg-rose-500 px-5 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white shadow-soft">
               What about a cute date?
             </div>
           </div>
-          <div className="flex flex-wrap justify-center gap-3 text-xs uppercase tracking-[0.28em] text-rose-600">
-            {[
-              "Certified cutie",
-              "Snack bribed",
-              "Meme approved",
-              "Hug voucher",
-            ].map((label) => (
-              <span
-                key={label}
-                className="rounded-full bg-white/80 px-4 py-2 shadow-soft"
+          <div className="flex flex-col items-center gap-2 text-center">
+            <div className="no-dodge">
+              <button
+                type="button"
+                className="no-glow rounded-full border border-rose-200 bg-white/90 px-6 py-3 text-xs font-semibold uppercase tracking-[0.32em] text-rose-600 shadow-soft transition hover:bg-rose-50/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-200"
               >
-                {label}
-              </span>
+                No
+              </button>
+            </div>
+            <span className="text-[0.65rem] uppercase tracking-[0.3em] text-rose-500">
+              Not a real option
+            </span>
+          </div>
+        </section>
+
+        <section className="grid gap-6 lg:grid-cols-[1.05fr_1fr]">
+          <div className="relative overflow-hidden rounded-[2.5rem] bg-white/90 p-6 text-left shadow-soft">
+            <span
+              aria-hidden="true"
+              className="twinkle absolute right-10 top-10 h-2.5 w-2.5 rounded-full bg-rose-200/80"
+            />
+            <span
+              aria-hidden="true"
+              className="twinkle absolute -right-4 bottom-6 h-12 w-12 rounded-full bg-amber-100/80 blur-[1px]"
+              style={{ animationDelay: "-1.2s" }}
+            />
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-400">
+              Swoon meter
+            </p>
+            <h3 className="preview-heading mt-3 text-2xl text-slate-900 md:text-3xl">
+              Crush level: maxed
+            </h3>
+            <p className="mt-2 text-sm text-slate-600">
+              Side effects include spontaneous smiling and extra cuddles.
+            </p>
+            <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-rose-100">
+              <div className="swoon-meter h-full w-[88%] rounded-full bg-gradient-to-r from-rose-400 via-amber-300 to-rose-400" />
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-rose-500">
+              {sparkleWords.map((word) => (
+                <span
+                  key={word}
+                  className="rounded-full bg-rose-50/80 px-3 py-1 shadow-soft"
+                >
+                  {word}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {perkCards.map((perk, index) => (
+              <div
+                key={perk.title}
+                className={`relative overflow-hidden rounded-[2rem] border border-rose-100 bg-white/85 p-4 shadow-soft ${
+                  index % 2 === 0 ? "sticker-wiggle" : ""
+                }`}
+              >
+                <span
+                  aria-hidden="true"
+                  className="twinkle absolute right-4 top-4 h-2 w-2 rounded-full bg-rose-300/80"
+                />
+                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-500">
+                  {perk.title}
+                </p>
+                <p className="mt-2 text-sm text-slate-600">{perk.body}</p>
+              </div>
             ))}
           </div>
         </section>
@@ -256,21 +365,26 @@ export default function CuteClassicRenderer({
 
           if (section === "love-note") {
             return (
-              <section key="love-note" className="space-y-6">
+              <section key="love-note" className="space-y-8">
                 {loveNotes.length > 0 ? (
-                  loveNotes.map((note, index) => (
-                    <div
-                      key={`love-note-${index}`}
-                      className="rounded-[2.5rem] border-2 border-dashed border-rose-200 bg-white/90 p-8 text-center shadow-[0_25px_60px_-40px_rgba(244,114,182,0.6)]"
-                    >
-                      <h2 className="preview-heading text-2xl text-slate-900 md:text-3xl">
-                        {index === 0 ? "Love note" : "Extra love"}
-                      </h2>
-                      <p className="mt-4 text-sm text-slate-700 md:text-base">
-                        {note}
-                      </p>
-                    </div>
-                  ))
+                  loveNotes.map((note, index) => {
+                    const title =
+                      doc.loveNoteTitles?.[index]?.trim() ||
+                      (index === 0 ? "Love note" : "Extra love");
+                    return (
+                      <div
+                        key={`love-note-${index}`}
+                        className="rounded-[2.5rem] border-2 border-dashed border-rose-200 bg-white/90 p-8 text-center shadow-[0_25px_60px_-40px_rgba(244,114,182,0.6)]"
+                      >
+                        <h2 className="preview-heading text-2xl text-slate-900 md:text-3xl">
+                          {title}
+                        </h2>
+                        <p className="mt-4 text-sm text-slate-700 md:text-base">
+                          {note}
+                        </p>
+                      </div>
+                    );
+                  })
                 ) : (
                   <div className="rounded-[2.5rem] border-2 border-dashed border-rose-200 bg-white/90 p-8 text-center shadow-soft">
                     <h2 className="preview-heading text-2xl text-slate-900 md:text-3xl">
@@ -291,7 +405,7 @@ export default function CuteClassicRenderer({
               className="rounded-[2.5rem] bg-white/85 p-8 shadow-soft"
             >
               <h2 className="preview-heading text-center text-2xl text-slate-900 md:text-3xl">
-                Reasons I am obsessed with you
+                {doc.momentsTitle}
               </h2>
               <ul className="mt-5 grid gap-3 text-sm text-slate-700 md:text-base">
                 {moments.map((moment, index) => (

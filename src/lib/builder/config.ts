@@ -9,6 +9,9 @@ import type {
 
 const DEFAULT_MAX_PHOTOS = 15;
 const DEFAULT_UPSELL_PRICE = 2;
+const DEFAULT_MOMENTS_TITLE = "Reasons I am obsessed with you";
+const DEFAULT_LOVE_NOTE_TITLE = "Love note";
+const DEFAULT_EXTRA_LOVE_TITLE = "Extra love";
 
 const themePresets: Record<TemplateId, Omit<BuilderTheme, "gradient" | "tagline">> = {
   "cute-classic": {
@@ -58,6 +61,27 @@ const themePresets: Record<TemplateId, Omit<BuilderTheme, "gradient" | "tagline"
   },
 };
 
+const momentsTitlePresets: Partial<Record<TemplateId, string>> = {
+  "midnight-muse": "Cute moments",
+};
+
+const extraLoveTitlePresets: Partial<Record<TemplateId, string>> = {
+  "midnight-muse": "Midnight echoes",
+};
+
+export const getDefaultMomentsTitle = (templateId: TemplateId) =>
+  momentsTitlePresets[templateId] ?? DEFAULT_MOMENTS_TITLE;
+
+export const getDefaultLoveNoteTitle = (
+  templateId: TemplateId,
+  index: number
+) => {
+  if (index === 0) {
+    return DEFAULT_LOVE_NOTE_TITLE;
+  }
+  return extraLoveTitlePresets[templateId] ?? DEFAULT_EXTRA_LOVE_TITLE;
+};
+
 const createPhoto = (src: string, order: number): BuilderPhoto => ({
   id: `photo-${order}-${Math.random().toString(36).slice(2, 8)}`,
   src,
@@ -94,10 +118,13 @@ export const getDefaultBuilderDoc = (templateId: TemplateId): BuilderDoc => {
 
   return {
     templateId,
+    tagline: theme.tagline,
     title: copy.title,
     subtitle: copy.intro,
     loveNote: copy.loveNote,
     loveNotes: [copy.loveNote],
+    loveNoteTitles: [getDefaultLoveNoteTitle(templateId, 0)],
+    momentsTitle: getDefaultMomentsTitle(templateId),
     moments: copy.cuteMoments,
     photos,
     music: template?.demo.music

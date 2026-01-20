@@ -17,7 +17,10 @@ import {
   Trash2,
 } from "lucide-react";
 import type { BuilderDoc, BuilderSettings, BuilderMusic } from "@/lib/builder/types";
-import { createUploadedPhoto } from "@/lib/builder/config";
+import {
+  createUploadedPhoto,
+  getDefaultLoveNoteTitle,
+} from "@/lib/builder/config";
 
 const MIN_MOMENTS = 3;
 const MAX_MOMENTS = 6;
@@ -226,6 +229,12 @@ export default function EditorPanel({
   );
   const loveNotes =
     doc.loveNotes && doc.loveNotes.length > 0 ? doc.loveNotes : [doc.loveNote];
+  const loveNoteTitles = loveNotes.map((_, index) => {
+    const title = doc.loveNoteTitles?.[index];
+    return typeof title === "string"
+      ? title
+      : getDefaultLoveNoteTitle(doc.templateId, index);
+  });
 
   useEffect(() => {
     if (photoUsage < settings.maxPhotos) {
@@ -258,10 +267,25 @@ export default function EditorPanel({
   };
 
   const handleTextChange =
-    (field: "title" | "subtitle") =>
+    (field: "title" | "subtitle" | "tagline") =>
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const value = event.target.value;
       updateDoc((prev) => ({ ...prev, [field]: value }));
+    };
+
+  const handleMomentsTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    updateDoc((prev) => ({ ...prev, momentsTitle: value }));
+  };
+
+  const handleLoveNoteTitleChange =
+    (index: number) => (event: ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      updateDoc((prev) => {
+        const nextTitles = [...loveNoteTitles];
+        nextTitles[index] = value;
+        return { ...prev, loveNoteTitles: nextTitles };
+      });
     };
 
   const handleLoveNoteChange =
@@ -282,9 +306,16 @@ export default function EditorPanel({
     if (loveNotes.length >= MAX_LOVE_NOTES) {
       return;
     }
+    const nextNotes = [...loveNotes, ""];
+    const nextTitles = [
+      ...loveNoteTitles,
+      getDefaultLoveNoteTitle(doc.templateId, loveNotes.length),
+    ];
     updateDoc((prev) => ({
       ...prev,
-      loveNotes: [...loveNotes, ""],
+      loveNote: nextNotes[0] ?? "",
+      loveNotes: nextNotes,
+      loveNoteTitles: nextTitles,
     }));
     onToast("Added love note");
   };
@@ -294,10 +325,14 @@ export default function EditorPanel({
       return;
     }
     const nextNotes = loveNotes.filter((_, noteIndex) => noteIndex !== index);
+    const nextTitles = loveNoteTitles.filter(
+      (_, titleIndex) => titleIndex !== index
+    );
     updateDoc((prev) => ({
       ...prev,
       loveNote: nextNotes[0] ?? "",
       loveNotes: nextNotes,
+      loveNoteTitles: nextTitles,
     }));
   };
 
@@ -485,6 +520,17 @@ export default function EditorPanel({
       >
         <label className="block">
           <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+            Tagline
+          </span>
+          <input
+            value={doc.tagline}
+            onChange={handleTextChange("tagline")}
+            className="mt-2 w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+          />
+        </label>
+
+        <label className="block">
+          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
             Title
           </span>
           <input
@@ -568,12 +614,20 @@ export default function EditorPanel({
               key={`love-note-${index}`}
               className="flex items-start gap-3 rounded-2xl border border-white/70 bg-white/80 px-3 py-2 shadow-soft"
             >
-              <AutoResizeTextarea
-                value={note}
-                onChange={handleLoveNoteChange(index)}
-                rows={4}
-                className="w-full resize-none bg-transparent px-1 py-2 text-sm text-slate-700 focus:outline-none"
-              />
+              <div className="flex-1 space-y-2">
+                <input
+                  value={loveNoteTitles[index]}
+                  onChange={handleLoveNoteTitleChange(index)}
+                  placeholder="Note title"
+                  className="w-full bg-transparent px-1 py-1 text-sm font-semibold text-slate-700 placeholder:text-slate-400 focus:outline-none"
+                />
+                <AutoResizeTextarea
+                  value={note}
+                  onChange={handleLoveNoteChange(index)}
+                  rows={4}
+                  className="w-full resize-none bg-transparent px-1 py-2 text-sm text-slate-700 focus:outline-none"
+                />
+              </div>
               <button
                 type="button"
                 onClick={handleRemoveLoveNote(index)}
@@ -732,6 +786,16 @@ export default function EditorPanel({
         title="Cute moments"
         helper="Short highlights you want them to remember."
       >
+        <label className="block">
+          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+            Section title
+          </span>
+          <input
+            value={doc.momentsTitle}
+            onChange={handleMomentsTitleChange}
+            className="mt-2 w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+          />
+        </label>
         <p className="text-xs text-slate-500">Keep it short and sweet.</p>
         <div className="space-y-3">
           {doc.moments.map((moment, index) => (
