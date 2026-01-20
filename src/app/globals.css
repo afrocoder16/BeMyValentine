@@ -154,6 +154,40 @@ summary::-webkit-details-marker {
   animation: swoon-meter 4s ease-in-out infinite;
 }
 
+@keyframes glow-sweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-120%);
+  }
+  40% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(120%);
+  }
+}
+
+.glow-sweep {
+  animation: glow-sweep 8s ease-in-out infinite;
+}
+
+@keyframes ticket-float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.ticket-float {
+  animation: ticket-float 6s ease-in-out infinite;
+}
+
 @keyframes yes-pop {
   0% {
     transform: scale(1);

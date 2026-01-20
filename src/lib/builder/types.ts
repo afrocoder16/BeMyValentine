@@ -15,6 +15,11 @@ export type BuilderMusic = {
   duration?: number;
 };
 
+export type BuilderPerkCard = {
+  title: string;
+  body: string;
+};
+
 export type BuilderDoc = {
   templateId: TemplateId;
   tagline: string;
@@ -25,6 +30,15 @@ export type BuilderDoc = {
   loveNoteTitles: string[];
   momentsTitle: string;
   moments: string[];
+  swoonLabel: string;
+  swoonHeadline: string;
+  swoonBody: string;
+  swoonTags: string[];
+  perkCards: BuilderPerkCard[];
+  datePlanTitle: string;
+  datePlanSteps: BuilderPerkCard[];
+  promiseTitle: string;
+  promiseItems: string[];
   photos: BuilderPhoto[];
   music: BuilderMusic | null;
   selectedFont: string;

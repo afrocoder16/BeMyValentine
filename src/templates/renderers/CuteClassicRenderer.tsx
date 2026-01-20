@@ -119,25 +119,16 @@ export default function CuteClassicRenderer({
       : ["gallery", "love-note", "moments"];
   const captionMoments = moments.slice(0, photos.length);
   const [isYesAnimating, setIsYesAnimating] = useState(false);
-  const perkCards = [
-    {
-      title: "Snack mission",
-      body: "Crunchy, sweet, and extra napkins. We are prepared.",
-    },
-    {
-      title: "Playlist swap",
-      body: "You pick the mood. I queue the heart songs.",
-    },
-    {
-      title: "Hug voucher",
-      body: "Unlimited squeezes. Redeem any time you want.",
-    },
-    {
-      title: "Meme reserve",
-      body: "Curated chaos, saved just for us.",
-    },
-  ];
-  const sparkleWords = ["giddy", "smitten", "sparkly", "obsessed"];
+  const perkCards = doc.perkCards.filter(
+    (perk) => perk.title.trim().length > 0 || perk.body.trim().length > 0
+  );
+  const sparkleWords = doc.swoonTags.filter((tag) => tag.trim().length > 0);
+  const datePlanSteps = doc.datePlanSteps.filter(
+    (step) => step.title.trim().length > 0 || step.body.trim().length > 0
+  );
+  const promiseItems = doc.promiseItems.filter(
+    (item) => item.trim().length > 0
+  );
 
   const triggerYesAnimation = () => {
     setIsYesAnimating(false);
@@ -263,7 +254,7 @@ export default function CuteClassicRenderer({
         </section>
 
         <section className="grid gap-6 lg:grid-cols-[1.05fr_1fr]">
-          <div className="relative overflow-hidden rounded-[2.5rem] bg-white/90 p-6 text-left shadow-soft">
+          <div className="relative overflow-hidden rounded-[2.5rem] bg-white/90 p-6 text-left shadow-soft transition duration-300 hover:-translate-y-1">
             <span
               aria-hidden="true"
               className="twinkle absolute right-10 top-10 h-2.5 w-2.5 rounded-full bg-rose-200/80"
@@ -273,34 +264,42 @@ export default function CuteClassicRenderer({
               className="twinkle absolute -right-4 bottom-6 h-12 w-12 rounded-full bg-amber-100/80 blur-[1px]"
               style={{ animationDelay: "-1.2s" }}
             />
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-400">
-              Swoon meter
-            </p>
-            <h3 className="preview-heading mt-3 text-2xl text-slate-900 md:text-3xl">
-              Crush level: maxed
-            </h3>
-            <p className="mt-2 text-sm text-slate-600">
-              Side effects include spontaneous smiling and extra cuddles.
-            </p>
+            {doc.swoonLabel.trim().length > 0 ? (
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-400">
+                {doc.swoonLabel}
+              </p>
+            ) : null}
+            {doc.swoonHeadline.trim().length > 0 ? (
+              <h3 className="preview-heading mt-3 text-2xl text-slate-900 md:text-3xl">
+                {doc.swoonHeadline}
+              </h3>
+            ) : null}
+            {doc.swoonBody.trim().length > 0 ? (
+              <p className="mt-2 text-sm text-slate-600">
+                {doc.swoonBody}
+              </p>
+            ) : null}
             <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-rose-100">
               <div className="swoon-meter h-full w-[88%] rounded-full bg-gradient-to-r from-rose-400 via-amber-300 to-rose-400" />
             </div>
-            <div className="mt-4 flex flex-wrap gap-2 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-rose-500">
-              {sparkleWords.map((word) => (
-                <span
-                  key={word}
-                  className="rounded-full bg-rose-50/80 px-3 py-1 shadow-soft"
-                >
-                  {word}
-                </span>
-              ))}
-            </div>
+            {sparkleWords.length > 0 ? (
+              <div className="mt-4 flex flex-wrap gap-2 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-rose-500">
+                {sparkleWords.map((word, index) => (
+                  <span
+                    key={`${word}-${index}`}
+                    className="rounded-full bg-rose-50/80 px-3 py-1 shadow-soft"
+                  >
+                    {word}
+                  </span>
+                ))}
+              </div>
+            ) : null}
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {perkCards.map((perk, index) => (
               <div
-                key={perk.title}
-                className={`relative overflow-hidden rounded-[2rem] border border-rose-100 bg-white/85 p-4 shadow-soft ${
+                key={`${perk.title}-${index}`}
+                className={`relative overflow-hidden rounded-[2rem] border border-rose-100 bg-white/85 p-4 shadow-soft transition duration-300 hover:-translate-y-1 ${
                   index % 2 === 0 ? "sticker-wiggle" : ""
                 }`}
               >
@@ -308,12 +307,104 @@ export default function CuteClassicRenderer({
                   aria-hidden="true"
                   className="twinkle absolute right-4 top-4 h-2 w-2 rounded-full bg-rose-300/80"
                 />
-                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-500">
-                  {perk.title}
-                </p>
-                <p className="mt-2 text-sm text-slate-600">{perk.body}</p>
+                <span
+                  aria-hidden="true"
+                  className="glow-sweep absolute -left-1/2 top-0 h-full w-1/2 bg-gradient-to-r from-transparent via-rose-200/50 to-transparent"
+                />
+                {perk.title.trim().length > 0 ? (
+                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-500">
+                    {perk.title}
+                  </p>
+                ) : null}
+                {perk.body.trim().length > 0 ? (
+                  <p className="mt-2 text-sm text-slate-600">{perk.body}</p>
+                ) : null}
               </div>
             ))}
+          </div>
+        </section>
+
+        <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="relative overflow-hidden rounded-[2.5rem] border border-white/70 bg-white/90 p-6 shadow-soft transition duration-300 hover:-translate-y-1">
+            <span
+              aria-hidden="true"
+              className="glow-sweep absolute -left-1/2 top-0 h-full w-1/2 bg-gradient-to-r from-transparent via-rose-200/60 to-transparent"
+            />
+            <span
+              aria-hidden="true"
+              className="twinkle absolute right-6 top-6 h-2.5 w-2.5 rounded-full bg-rose-200/80"
+            />
+            {doc.datePlanTitle.trim().length > 0 ? (
+              <h3 className="preview-heading text-2xl text-slate-900 md:text-3xl">
+                {doc.datePlanTitle}
+              </h3>
+            ) : null}
+            {datePlanSteps.length > 0 ? (
+              <div className="mt-5 space-y-4">
+                {datePlanSteps.map((step, index) => (
+                  <div
+                    key={`${step.title}-${index}`}
+                    className={`relative rounded-[1.75rem] border border-rose-100 bg-white/85 p-4 shadow-soft transition duration-300 hover:-translate-y-1 ${
+                      index % 2 === 0 ? "ticket-float" : ""
+                    }`}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="absolute -left-2 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-rose-100"
+                    />
+                    <span
+                      aria-hidden="true"
+                      className="absolute -right-2 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-rose-100"
+                    />
+                    <div className="flex items-start gap-3">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-500 text-xs font-semibold text-white shadow-soft">
+                        {index + 1}
+                      </span>
+                      <div>
+                        {step.title.trim().length > 0 ? (
+                          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-500">
+                            {step.title}
+                          </p>
+                        ) : null}
+                        {step.body.trim().length > 0 ? (
+                          <p className="mt-2 text-sm text-slate-600">
+                            {step.body}
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+          </div>
+
+          <div className="relative overflow-hidden rounded-[2.5rem] border border-white/70 bg-white/90 p-6 shadow-soft transition duration-300 hover:-translate-y-1">
+            <span
+              aria-hidden="true"
+              className="glow-sweep absolute -left-1/2 top-0 h-full w-1/2 bg-gradient-to-r from-transparent via-amber-200/60 to-transparent"
+            />
+            <span
+              aria-hidden="true"
+              className="twinkle absolute right-6 top-6 h-2.5 w-2.5 rounded-full bg-amber-200/80"
+            />
+            {doc.promiseTitle.trim().length > 0 ? (
+              <h3 className="preview-heading text-2xl text-slate-900 md:text-3xl">
+                {doc.promiseTitle}
+              </h3>
+            ) : null}
+            {promiseItems.length > 0 ? (
+              <ul className="mt-5 space-y-3 text-sm text-slate-600">
+                {promiseItems.map((item, index) => (
+                  <li
+                    key={`${item}-${index}`}
+                    className="rounded-[1.75rem] bg-rose-50/80 px-4 py-3 shadow-soft transition duration-300 hover:-translate-y-0.5"
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
           </div>
         </section>
 
@@ -333,7 +424,7 @@ export default function CuteClassicRenderer({
                   {photos.map((photo, index) => (
                     <div key={`${photo.id}-${index}`} className="space-y-3">
                       <div
-                        className="relative overflow-hidden rounded-[2.5rem] bg-white/85 shadow-[0_24px_60px_-40px_rgba(248,113,113,0.8)]"
+                        className="relative overflow-hidden rounded-[2.5rem] bg-white/85 shadow-[0_24px_60px_-40px_rgba(248,113,113,0.8)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_30px_70px_-40px_rgba(248,113,113,0.85)]"
                         style={{ aspectRatio: "4 / 5" }}
                       >
                         {photo.src ? (
@@ -352,7 +443,7 @@ export default function CuteClassicRenderer({
                         )}
                       </div>
                       {captionMoments[index] ? (
-                        <div className="rounded-2xl bg-white/80 px-4 py-3 text-sm text-slate-700 shadow-soft">
+                        <div className="rounded-2xl bg-white/80 px-4 py-3 text-sm text-slate-700 shadow-soft transition duration-300 hover:-translate-y-0.5">
                           {captionMoments[index]}
                         </div>
                       ) : null}
@@ -374,7 +465,7 @@ export default function CuteClassicRenderer({
                     return (
                       <div
                         key={`love-note-${index}`}
-                        className="rounded-[2.5rem] border-2 border-dashed border-rose-200 bg-white/90 p-8 text-center shadow-[0_25px_60px_-40px_rgba(244,114,182,0.6)]"
+                        className="rounded-[2.5rem] border-2 border-dashed border-rose-200 bg-white/90 p-8 text-center shadow-[0_25px_60px_-40px_rgba(244,114,182,0.6)] transition duration-300 hover:-translate-y-1"
                       >
                         <h2 className="preview-heading text-2xl text-slate-900 md:text-3xl">
                           {title}
@@ -386,7 +477,7 @@ export default function CuteClassicRenderer({
                     );
                   })
                 ) : (
-                  <div className="rounded-[2.5rem] border-2 border-dashed border-rose-200 bg-white/90 p-8 text-center shadow-soft">
+                  <div className="rounded-[2.5rem] border-2 border-dashed border-rose-200 bg-white/90 p-8 text-center shadow-soft transition duration-300 hover:-translate-y-1">
                     <h2 className="preview-heading text-2xl text-slate-900 md:text-3xl">
                       Love note
                     </h2>
@@ -411,7 +502,7 @@ export default function CuteClassicRenderer({
                 {moments.map((moment, index) => (
                   <li
                     key={`${moment}-${index}`}
-                    className="rounded-2xl bg-rose-50/80 px-4 py-3 shadow-soft"
+                    className="rounded-2xl bg-rose-50/80 px-4 py-3 shadow-soft transition duration-300 hover:-translate-y-0.5"
                   >
                     {moment}
                   </li>

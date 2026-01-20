@@ -24,3 +24,5 @@ create policy "public insert published pages"
   on public.pages
   for insert
   with check (status = 'published');
+
+

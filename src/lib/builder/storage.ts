@@ -4,7 +4,12 @@ import {
   getDefaultBuilderDoc,
   getDefaultLoveNoteTitle,
 } from "@/lib/builder/config";
-import type { BuilderDoc, BuilderMusic, BuilderPhoto } from "@/lib/builder/types";
+import type {
+  BuilderDoc,
+  BuilderMusic,
+  BuilderPerkCard,
+  BuilderPhoto,
+} from "@/lib/builder/types";
 
 const storageKey = (templateId: TemplateId) => `bmv:builder:${templateId}`;
 
@@ -62,6 +67,16 @@ export const coerceBuilderDoc = (
   const loveNoteTitles = Array.isArray(doc.loveNoteTitles)
     ? doc.loveNoteTitles.filter((title) => typeof title === "string")
     : [];
+  const swoonTags = Array.isArray(doc.swoonTags)
+    ? doc.swoonTags.filter((tag) => typeof tag === "string")
+    : [];
+  const perkCards = Array.isArray(doc.perkCards) ? doc.perkCards : [];
+  const datePlanSteps = Array.isArray(doc.datePlanSteps)
+    ? doc.datePlanSteps
+    : [];
+  const promiseItems = Array.isArray(doc.promiseItems)
+    ? doc.promiseItems.filter((item) => typeof item === "string")
+    : [];
   const sectionOrder = Array.isArray(doc.sectionOrder)
     ? doc.sectionOrder.filter(
         (section): section is "gallery" | "love-note" | "moments" =>
@@ -90,6 +105,50 @@ export const coerceBuilderDoc = (
     moments: Array.isArray(doc.moments)
       ? doc.moments.filter((moment) => typeof moment === "string")
       : defaults.moments,
+    swoonLabel:
+      typeof doc.swoonLabel === "string" ? doc.swoonLabel : defaults.swoonLabel,
+    swoonHeadline:
+      typeof doc.swoonHeadline === "string"
+        ? doc.swoonHeadline
+        : defaults.swoonHeadline,
+    swoonBody:
+      typeof doc.swoonBody === "string" ? doc.swoonBody : defaults.swoonBody,
+    swoonTags: defaults.swoonTags.map(
+      (tag, index) => swoonTags[index] ?? tag
+    ),
+    perkCards: defaults.perkCards.map((defaultCard, index) => {
+      const card = perkCards[index] as Partial<BuilderPerkCard> | undefined;
+      if (!card || typeof card !== "object") {
+        return { ...defaultCard };
+      }
+      return {
+        title:
+          typeof card.title === "string" ? card.title : defaultCard.title,
+        body: typeof card.body === "string" ? card.body : defaultCard.body,
+      };
+    }),
+    datePlanTitle:
+      typeof doc.datePlanTitle === "string"
+        ? doc.datePlanTitle
+        : defaults.datePlanTitle,
+    datePlanSteps: defaults.datePlanSteps.map((defaultStep, index) => {
+      const step = datePlanSteps[index] as Partial<BuilderPerkCard> | undefined;
+      if (!step || typeof step !== "object") {
+        return { ...defaultStep };
+      }
+      return {
+        title:
+          typeof step.title === "string" ? step.title : defaultStep.title,
+        body: typeof step.body === "string" ? step.body : defaultStep.body,
+      };
+    }),
+    promiseTitle:
+      typeof doc.promiseTitle === "string"
+        ? doc.promiseTitle
+        : defaults.promiseTitle,
+    promiseItems: defaults.promiseItems.map(
+      (item, index) => promiseItems[index] ?? item
+    ),
     photos:
       photos.length > 0
         ? photos.slice(0, settings.maxPhotos)

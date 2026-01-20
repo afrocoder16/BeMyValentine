@@ -220,6 +220,7 @@ export default function EditorPanel({
   const momentFocusIndex = useRef<number | null>(null);
   const [pendingPhotoIndex, setPendingPhotoIndex] = useState<number | null>(null);
   const [showPhotoUpsell, setShowPhotoUpsell] = useState(false);
+  const isCuteClassic = doc.templateId === "cute-classic";
 
   const photos = [...doc.photos].sort((a, b) => a.order - b.order);
   const photoUsage = photos.length;
@@ -285,6 +286,64 @@ export default function EditorPanel({
         const nextTitles = [...loveNoteTitles];
         nextTitles[index] = value;
         return { ...prev, loveNoteTitles: nextTitles };
+      });
+    };
+
+  const handleSwoonChange =
+    (field: "swoonLabel" | "swoonHeadline" | "swoonBody") =>
+    (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const value = event.target.value;
+      updateDoc((prev) => ({ ...prev, [field]: value }));
+    };
+
+  const handleSwoonTagChange =
+    (index: number) => (event: ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      updateDoc((prev) => {
+        const nextTags = [...prev.swoonTags];
+        nextTags[index] = value;
+        return { ...prev, swoonTags: nextTags };
+      });
+    };
+
+  const handlePerkChange =
+    (index: number, field: "title" | "body") =>
+    (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const value = event.target.value;
+      updateDoc((prev) => {
+        const nextCards = [...prev.perkCards];
+        const current = nextCards[index] ?? { title: "", body: "" };
+        nextCards[index] = { ...current, [field]: value };
+        return { ...prev, perkCards: nextCards };
+      });
+    };
+
+  const handleSimpleFieldChange =
+    (field: "datePlanTitle" | "promiseTitle") =>
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      updateDoc((prev) => ({ ...prev, [field]: value }));
+    };
+
+  const handleDatePlanChange =
+    (index: number, field: "title" | "body") =>
+    (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const value = event.target.value;
+      updateDoc((prev) => {
+        const nextSteps = [...prev.datePlanSteps];
+        const current = nextSteps[index] ?? { title: "", body: "" };
+        nextSteps[index] = { ...current, [field]: value };
+        return { ...prev, datePlanSteps: nextSteps };
+      });
+    };
+
+  const handlePromiseChange =
+    (index: number) => (event: ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      updateDoc((prev) => {
+        const nextPromises = [...prev.promiseItems];
+        nextPromises[index] = value;
+        return { ...prev, promiseItems: nextPromises };
       });
     };
 
@@ -781,6 +840,161 @@ export default function EditorPanel({
           </div>
         </div>
       </EditorSection>
+
+      {isCuteClassic ? (
+        <>
+          <EditorSection
+            title="Extra flair"
+            helper="Edit the swoon meter and perk cards."
+          >
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Swoon label
+              </span>
+              <input
+                value={doc.swoonLabel}
+                onChange={handleSwoonChange("swoonLabel")}
+                className="mt-2 w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+              />
+            </label>
+
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Swoon headline
+              </span>
+              <input
+                value={doc.swoonHeadline}
+                onChange={handleSwoonChange("swoonHeadline")}
+                className="mt-2 w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+              />
+            </label>
+
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Swoon body
+              </span>
+              <AutoResizeTextarea
+                value={doc.swoonBody}
+                onChange={handleSwoonChange("swoonBody")}
+                rows={2}
+                className="mt-2 w-full resize-none rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+              />
+            </label>
+
+            <div className="space-y-3">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Swoon tags
+              </span>
+              <div className="grid grid-cols-2 gap-2">
+                {doc.swoonTags.map((tag, index) => (
+                  <input
+                    key={`swoon-tag-${index}`}
+                    value={tag}
+                    onChange={handleSwoonTagChange(index)}
+                    className="rounded-2xl border border-white/70 bg-white/80 px-3 py-2 text-xs text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Perk cards
+              </span>
+              {doc.perkCards.map((card, index) => (
+                <div
+                  key={`perk-card-${index}`}
+                  className="space-y-2 rounded-2xl border border-white/70 bg-white/80 px-4 py-3 shadow-soft"
+                >
+                  <p className="text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-rose-400">
+                    Perk {index + 1}
+                  </p>
+                  <input
+                    value={card.title}
+                    onChange={handlePerkChange(index, "title")}
+                    className="w-full bg-transparent px-1 py-1 text-sm font-semibold text-slate-700 focus:outline-none"
+                  />
+                  <AutoResizeTextarea
+                    value={card.body}
+                    onChange={handlePerkChange(index, "body")}
+                    rows={2}
+                    className="w-full resize-none bg-transparent px-1 py-1 text-sm text-slate-700 focus:outline-none"
+                  />
+                </div>
+              ))}
+            </div>
+          </EditorSection>
+
+          <EditorSection
+            title="Date plan"
+            helper="Edit the plan and promise sections."
+          >
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Plan title
+              </span>
+              <input
+                value={doc.datePlanTitle}
+                onChange={handleSimpleFieldChange("datePlanTitle")}
+                className="mt-2 w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+              />
+            </label>
+            <div className="space-y-3">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Plan steps
+              </span>
+              {doc.datePlanSteps.map((step, index) => (
+                <div
+                  key={`plan-step-${index}`}
+                  className="space-y-2 rounded-2xl border border-white/70 bg-white/80 px-4 py-3 shadow-soft"
+                >
+                  <p className="text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-rose-400">
+                    Step {index + 1}
+                  </p>
+                  <input
+                    value={step.title}
+                    onChange={handleDatePlanChange(index, "title")}
+                    className="w-full bg-transparent px-1 py-1 text-sm font-semibold text-slate-700 focus:outline-none"
+                  />
+                  <AutoResizeTextarea
+                    value={step.body}
+                    onChange={handleDatePlanChange(index, "body")}
+                    rows={2}
+                    className="w-full resize-none bg-transparent px-1 py-1 text-sm text-slate-700 focus:outline-none"
+                  />
+                </div>
+              ))}
+            </div>
+
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Promise title
+              </span>
+              <input
+                value={doc.promiseTitle}
+                onChange={handleSimpleFieldChange("promiseTitle")}
+                className="mt-2 w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+              />
+            </label>
+
+            <div className="space-y-3">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Promise lines
+              </span>
+              <div className="space-y-2">
+                {doc.promiseItems.map((item, index) => (
+                  <input
+                    key={`promise-${index}`}
+                    value={item}
+                    onChange={handlePromiseChange(index)}
+                    className="w-full rounded-2xl border border-white/70 bg-white/80 px-3 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+                  />
+                ))}
+              </div>
+            </div>
+          </EditorSection>
+        </>
+      ) : null}
 
       <EditorSection
         title="Cute moments"
