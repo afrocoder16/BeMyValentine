@@ -109,9 +109,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const stripe = new Stripe(stripeSecret, {
-    apiVersion: "2024-06-20",
-  });
+  
 
   const priceId = plan === "normal" ? priceNormal : pricePro;
 
