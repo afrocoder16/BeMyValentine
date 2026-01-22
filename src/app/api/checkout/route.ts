@@ -9,6 +9,12 @@ import { validateDocShape } from "@/lib/publish/validation";
 
 export const runtime = "nodejs";
 
+const stripeSecret = process.env.STRIPE_SECRET_KEY;
+if (!stripeSecret) {
+  throw new Error("Missing STRIPE_SECRET_KEY");
+}
+const stripe = new Stripe(stripeSecret);
+
 type CheckoutRequestBody = {
   plan?: unknown;
   templateId?: unknown;
@@ -94,12 +100,11 @@ export async function POST(request: Request) {
     );
   }
 
-  const stripeSecret = process.env.STRIPE_SECRET_KEY ?? "";
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "";
   const priceNormal = process.env.STRIPE_PRICE_NORMAL ?? "";
   const pricePro = process.env.STRIPE_PRICE_PRO ?? "";
 
-  if (!stripeSecret || !siteUrl || !priceNormal || !pricePro) {
+  if (!siteUrl || !priceNormal || !pricePro) {
     return NextResponse.json(
       {
         error: "missing_env",
@@ -108,7 +113,6 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-  const stripe = new Stripe(stripeSecret);
   const priceId = plan === "normal" ? priceNormal : pricePro;
 
   try {
@@ -116,7 +120,7 @@ export async function POST(request: Request) {
       mode: "payment",
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${siteUrl}/publish/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${siteUrl}/build/${templateId}?canceled=1`,
+      cancel_url: `${siteUrl}/pricing?canceled=1`,
       metadata: {
         plan,
         templateId,
