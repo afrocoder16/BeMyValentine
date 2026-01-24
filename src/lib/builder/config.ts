@@ -180,10 +180,16 @@ const GARDEN_PROMISE_ITEMS = [
   "I choose you in every season.",
 ];
 const RETRO_TAGLINE = "PLAYER 2";
-const RETRO_MOMENTS_TITLE = "BE MY VALENTINE?";
+const RETRO_MOMENTS_TITLE = "Replay list";
 const RETRO_SWOON_LABEL = "Tracking";
 const RETRO_SWOON_HEADLINE = "LIKE, A LOT";
-const RETRO_PROMISE_TITLE = "CHOOSE YOUR ENDING";
+const RETRO_PROMISE_TITLE = "Neon chorus";
+const RETRO_PROMISE_ITEMS = [
+  "PRESS PLAY ON US",
+  "NEON NIGHT FAVORITE",
+  "SIDE A FOREVER",
+  "REWIND FOR MORE",
+];
 const DEFAULT_PERK_CARDS: BuilderPerkCard[] = [
   {
     title: "Snack mission",
@@ -401,6 +407,7 @@ export const getDefaultBuilderDoc = (templateId: TemplateId): BuilderDoc => {
       swoonLabel: RETRO_SWOON_LABEL,
       swoonHeadline: RETRO_SWOON_HEADLINE,
       promiseTitle: RETRO_PROMISE_TITLE,
+      promiseItems: [...RETRO_PROMISE_ITEMS],
     };
   }
 

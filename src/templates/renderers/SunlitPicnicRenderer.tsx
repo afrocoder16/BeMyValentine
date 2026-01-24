@@ -1,7 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import type { TemplateRendererProps } from "@/lib/builder/types";
 import {
   resolveBackgroundOverlayClass,
@@ -10,83 +17,33 @@ import {
   resolveTitleSizeClass,
 } from "@/templates/renderers/utils";
 
-type PreviewAudioControlProps = {
-  title: string;
-  src: string;
+type BasketItem = {
+  id: string;
+  label: string;
+  detail?: string;
 };
 
-function PreviewAudioControl({ title, src }: PreviewAudioControlProps) {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+const DEFAULT_BASKET_HINT = "Pick a few items to personalize this map.";
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) {
-      return;
-    }
-    const handleEnded = () => setIsPlaying(false);
-    audio.addEventListener("ended", handleEnded);
-    return () => {
-      audio.removeEventListener("ended", handleEnded);
-    };
-  }, []);
-
-  const handleToggle = async () => {
-    const audio = audioRef.current;
-    if (!audio) {
-      return;
-    }
-    if (isPlaying) {
-      audio.pause();
-      setIsPlaying(false);
-      return;
-    }
-    try {
-      await audio.play();
-      setIsPlaying(true);
-    } catch {
-      setIsPlaying(false);
-    }
-  };
-
-  return (
-    <div className="flex flex-wrap items-center gap-4 rounded-[1.5rem] border border-amber-100 bg-white/90 px-5 py-3 text-slate-700 shadow-[0_18px_40px_-28px_rgba(148,163,184,0.7)]">
-      <button
-        type="button"
-        onClick={handleToggle}
-        aria-pressed={isPlaying}
-        className="rounded-full px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white shadow-[0_16px_40px_-28px_rgba(251,146,60,0.6)] transition hover:-translate-y-0.5"
-        style={{
-          background:
-            "linear-gradient(135deg, var(--sunlit-accent-strong), var(--sunlit-accent))",
-        }}
-      >
-        {isPlaying ? "Pause" : "Play"}
-      </button>
-      <div>
-        <p className="text-[0.6rem] font-semibold uppercase tracking-[0.4em] text-amber-500">
-          Soundtrack
-        </p>
-        <p className="mt-1 text-xs text-slate-600">
-          <span aria-hidden="true">&#9835;</span> {title}
-        </p>
-      </div>
-      <audio ref={audioRef} src={src} preload="metadata" />
-    </div>
-  );
-}
-
-const SUNLIT_PALETTE = {
-  accent: "#f59e0b",
-  accentStrong: "#f97316",
-  blush: "#fb7185",
-  leaf: "#34d399",
-  sky: "#38bdf8",
-  glow: "rgba(251,191,36,0.25)",
+const buildBasketLine = (label: string) => {
+  const lower = label.toLowerCase();
+  if (/(strawberry|berry)/.test(lower)) {
+    return `Because you picked ${label}, I owe you a sweet surprise.`;
+  }
+  if (/blanket/.test(lower)) {
+    return `Because you picked ${label}, the coziest spot is yours.`;
+  }
+  if (/(camera|photo)/.test(lower)) {
+    return `Because you picked ${label}, we will collect moments.`;
+  }
+  if (/(playlist|music|song)/.test(lower)) {
+    return `Because you picked ${label}, the soundtrack is ready.`;
+  }
+  if (/note/.test(lower)) {
+    return `Because you picked ${label}, there is a secret line waiting.`;
+  }
+  return `Because you picked ${label}, I am smiling already.`;
 };
-
-const NOTE_TILTS = ["-1.4deg", "1.2deg", "-0.8deg", "1.4deg"];
-const PHOTO_TILTS = ["-2deg", "1.5deg", "-1.2deg", "2deg", "-1.6deg"];
 
 export default function SunlitPicnicRenderer({
   doc,
@@ -94,36 +51,11 @@ export default function SunlitPicnicRenderer({
   mode,
   context = "builder",
 }: TemplateRendererProps) {
-  const photos = doc.photos.length
-    ? [...doc.photos].sort((a, b) => a.order - b.order)
-    : Array.from({ length: 3 }, (_, index) => ({
-        id: `placeholder-${index + 1}`,
-        src: "",
-        alt: undefined,
-        order: index,
-      }));
-  const moments = doc.moments.filter((moment) => moment.trim().length > 0);
-  const loveNotes =
-    doc.loveNotes && doc.loveNotes.length > 0
-      ? doc.loveNotes.filter((note) => note.trim().length > 0)
-      : doc.loveNote
-        ? [doc.loveNote]
-        : [];
-  const perkCards = doc.perkCards.filter(
-    (card) => card.title.trim().length > 0 || card.body.trim().length > 0
-  );
-  const datePlanSteps = doc.datePlanSteps.filter(
-    (step) => step.title.trim().length > 0 || step.body.trim().length > 0
-  );
-  const promiseItems = doc.promiseItems.filter(
-    (item) => item.trim().length > 0
-  );
-  const sparkleWords = doc.swoonTags.filter((tag) => tag.trim().length > 0);
+  const prefersReducedMotion = useReducedMotion();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
   const isPhone = mode === "phone";
   const isPublished = context === "published";
-  const showTagline =
-    doc.tagline.trim().length > 0 &&
-    (!isPublished || doc.tagline.trim() !== theme.tagline.trim());
   const fontStyleClass = resolveFontClass(doc.selectedFont);
   const titleSizeClass = resolveTitleSizeClass(doc.titleSize);
   const backgroundOverlayClass = resolveBackgroundOverlayClass(
@@ -141,436 +73,811 @@ export default function SunlitPicnicRenderer({
     : isPublished
       ? "min-h-screen"
       : "min-h-full";
+
+  const photos = doc.photos.length
+    ? [...doc.photos].sort((a, b) => a.order - b.order)
+    : Array.from({ length: 3 }, (_, index) => ({
+        id: `placeholder-${index + 1}`,
+        src: "",
+        alt: undefined,
+        order: index,
+      }));
+  const moments = doc.moments.filter((moment) => moment.trim().length > 0);
+  const loveNotes =
+    doc.loveNotes && doc.loveNotes.length > 0
+      ? doc.loveNotes.filter((note) => note.trim().length > 0)
+      : doc.loveNote
+        ? [doc.loveNote]
+        : [];
+  const loveNoteTitles = loveNotes.map(
+    (_, index) =>
+      doc.loveNoteTitles?.[index]?.trim() ||
+      (index === 0 ? "Sunset note" : "Extra note")
+  );
+  const perkCards = doc.perkCards.filter(
+    (card) => card.title.trim().length > 0 || card.body.trim().length > 0
+  );
+  const promiseItems = doc.promiseItems.filter((item) => item.trim().length > 0);
+  const datePlanSteps = doc.datePlanSteps.filter(
+    (step) => step.title.trim().length > 0 || step.body.trim().length > 0
+  );
+
+  const basketItems = useMemo<BasketItem[]>(() => {
+    const items = perkCards.map((card, index) => ({
+      id: `basket-${index}`,
+      label: card.title.trim() || `Item ${index + 1}`,
+      detail: card.body.trim() || undefined,
+    }));
+    const extraLabel = doc.swoonTags[0]?.trim() || "Secret note";
+    items.push({
+      id: "basket-secret",
+      label: extraLabel,
+      detail: doc.swoonBody.trim() || "A handwritten surprise inside.",
+    });
+    return items.slice(0, 5);
+  }, [perkCards, doc.swoonTags, doc.swoonBody]);
+
+  const snackLabels = useMemo(() => {
+    const labels = doc.swoonTags.filter((tag) => tag.trim().length > 0);
+    if (labels.length >= 3) {
+      return labels;
+    }
+    return ["Your favorite", "My favorite", "We both love", "Sweet extra"];
+  }, [doc.swoonTags]);
+
+  const [selectedBasket, setSelectedBasket] = useState<string[]>([]);
+  const [ticketStamped, setTicketStamped] = useState(false);
+
+  useEffect(() => {
+    if (!doc.music?.url) {
+      setIsPlaying(false);
+      return;
+    }
+    const audio = audioRef.current;
+    if (audio) {
+      audio.currentTime = 0;
+    }
+    setIsPlaying(true);
+  }, [doc.music?.url]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) {
+      return;
+    }
+    const handleEnded = () => setIsPlaying(false);
+    audio.addEventListener("ended", handleEnded);
+    return () => audio.removeEventListener("ended", handleEnded);
+  }, [doc.music?.url]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) {
+      return;
+    }
+    if (isPlaying) {
+      audio.play().catch(() => setIsPlaying(false));
+    } else {
+      audio.pause();
+    }
+  }, [isPlaying]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    const stored = window.localStorage.getItem("sunlit-picnic-basket");
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored) as string[];
+        if (Array.isArray(parsed)) {
+          setSelectedBasket(parsed);
+        }
+      } catch {
+        setSelectedBasket([]);
+      }
+    }
+    const stamped = window.localStorage.getItem("sunlit-picnic-ticket") === "true";
+    setTicketStamped(stamped);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    window.localStorage.setItem(
+      "sunlit-picnic-basket",
+      JSON.stringify(selectedBasket)
+    );
+  }, [selectedBasket]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    window.localStorage.setItem(
+      "sunlit-picnic-ticket",
+      ticketStamped ? "true" : "false"
+    );
+  }, [ticketStamped]);
+
+  const selectedSet = useMemo(() => new Set(selectedBasket), [selectedBasket]);
+  const toggleBasketItem = (id: string) => {
+    setSelectedBasket((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+        return Array.from(next);
+      }
+      if (next.size >= 5) {
+        return prev;
+      }
+      next.add(id);
+      return Array.from(next);
+    });
+  };
+
+  const personalizedLines = basketItems
+    .filter((item) => selectedSet.has(item.id))
+    .map((item) => buildBasketLine(item.label))
+    .slice(0, 3);
+
+  const noteLines = useMemo(() => {
+    const note = loveNotes[0] || "";
+    if (!note) {
+      return [];
+    }
+    return note
+      .split(/(?<=[.!?])\s+/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+  }, [loveNotes]);
+
+  const revealProps = prefersReducedMotion
+    ? {}
+    : {
+        initial: { opacity: 0, y: 24 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { once: true, amount: 0.35 },
+        transition: { duration: 0.6, ease: "easeOut" },
+      };
+
+  const paletteStyle: CSSProperties = {
+    "--picnic-cream": "#FFF7E6",
+    "--picnic-butter": "#F9E27D",
+    "--picnic-tangerine": "#F7A35B",
+    "--picnic-sky": "#A8D8F0",
+    "--picnic-sage": "#B9C8A3",
+    "--picnic-ink": "#2E2A24",
+  };
+
+  const showTagline = doc.tagline.trim().length > 0;
+  const showSubtitle = doc.showSubtitle !== false && doc.subtitle.trim().length > 0;
   const orderedSections =
     doc.sectionOrder && doc.sectionOrder.length === 3
       ? doc.sectionOrder
       : ["gallery", "love-note", "moments"];
-  const paletteStyle: CSSProperties = {
-    "--sunlit-accent": SUNLIT_PALETTE.accent,
-    "--sunlit-accent-strong": SUNLIT_PALETTE.accentStrong,
-    "--sunlit-blush": SUNLIT_PALETTE.blush,
-    "--sunlit-leaf": SUNLIT_PALETTE.leaf,
-    "--sunlit-sky": SUNLIT_PALETTE.sky,
-    "--sunlit-glow": SUNLIT_PALETTE.glow,
-  };
-  const [isYesAnimating, setIsYesAnimating] = useState(false);
-
-  const triggerYesAnimation = () => {
-    setIsYesAnimating(false);
-    requestAnimationFrame(() => setIsYesAnimating(true));
-  };
 
   return (
     <div
-      className={`preview-body ${fontStyleClass} relative w-full overflow-hidden ${containerRadius} ${containerHeight} bg-gradient-to-br ${theme.gradient} ${containerShadow}`}
+      className={`preview-body ${fontStyleClass} relative w-full overflow-hidden ${containerRadius} ${containerHeight} bg-[color:var(--picnic-cream)] ${containerShadow}`}
       style={{ fontFamily: "var(--preview-body)", ...paletteStyle }}
     >
-      <div className="pointer-events-none absolute inset-0 opacity-35 sunlit-gingham" />
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0 picnic-map" />
+        <div className="absolute inset-0 picnic-grain" />
+        <div className="absolute inset-0 picnic-bokeh" />
+      </div>
       <div className={`absolute inset-0 ${backgroundOverlayClass}`} />
-      <span
-        aria-hidden="true"
-        className="sunlit-float absolute -top-24 right-[-4rem] h-48 w-48 rounded-full blur-[1px]"
-        style={{
-          background:
-            "radial-gradient(circle, var(--sunlit-glow), transparent 70%)",
-        }}
-      />
-      <span
-        aria-hidden="true"
-        className="sunlit-float absolute bottom-[-4rem] left-[-3rem] h-56 w-56 rounded-full blur-[2px]"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(56,189,248,0.18), transparent 70%)",
-          animationDelay: "-4s",
-        }}
-      />
-      <span
-        aria-hidden="true"
-        className="sunlit-float absolute left-1/2 top-32 h-40 w-40 -translate-x-1/2 rounded-full blur-[2px]"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(52,211,153,0.18), transparent 70%)",
-          animationDelay: "-8s",
-        }}
-      />
 
-      {isPublished ? null : (
-        <div className="absolute right-6 top-6 z-10 rounded-full bg-white/70 px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-amber-500">
-          Recipient view
-        </div>
+      {prefersReducedMotion ? null : (
+        <>
+          <motion.div
+            className="picnic-cloud cloud-left"
+            animate={{ x: [0, 24, 0], opacity: [0.7, 0.9, 0.7] }}
+            transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="picnic-cloud cloud-right"
+            animate={{ x: [0, -18, 0], opacity: [0.6, 0.85, 0.6] }}
+            transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </>
       )}
 
-      <div
-        className={`relative mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 pb-24 pt-16 md:px-12 ${
-          isPhone ? "h-full overflow-y-auto" : ""
-        }`}
-      >
-        <header className="grid gap-12 lg:grid-cols-[1.15fr_0.85fr]">
-          <div className="space-y-8">
-            {showTagline ? (
-              <div className="inline-flex items-center gap-3 rounded-full border border-amber-100 bg-white/90 px-5 py-2 text-xs font-semibold uppercase tracking-[0.4em] text-amber-500 shadow-[0_12px_30px_-24px_rgba(251,146,60,0.6)]">
-                <span
-                  aria-hidden="true"
-                  className="h-1.5 w-1.5 rounded-full"
-                  style={{ backgroundColor: "var(--sunlit-accent)" }}
-                />
-                {doc.tagline}
-              </div>
-            ) : null}
-            <div>
-              <h1 className={`preview-heading ${titleSizeClass} text-slate-900`}>
-                {doc.title}
-              </h1>
-              {doc.showSubtitle === false ? null : (
-                <p className="mt-4 max-w-2xl text-sm text-slate-700 md:text-base">
-                  {doc.subtitle}
-                </p>
-              )}
-            </div>
-            {doc.music ? (
-              <PreviewAudioControl title={doc.music.name} src={doc.music.url} />
-            ) : null}
-            {sparkleWords.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {sparkleWords.map((word, index) => (
-                  <span
-                    key={`${word}-${index}`}
-                    className="sunlit-spark rounded-full border border-amber-100 bg-white/90 px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-amber-500"
-                    style={{ animationDelay: `${index * 0.4}s` }}
-                  >
-                    {word}
-                  </span>
-                ))}
-              </div>
-            ) : null}
-          </div>
-
-          <div className="relative flex flex-col items-center gap-6">
-            <div className="relative flex items-center justify-center">
-              <span
-                aria-hidden="true"
-                className="absolute -inset-6 rounded-full border border-dashed border-amber-200"
-              />
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 pb-24 pt-16 md:px-12">
+        <header className="relative space-y-6">
+          {showTagline ? (
+            <span className="picnic-label">{doc.tagline}</span>
+          ) : null}
+          <h1 className={`preview-heading ${titleSizeClass} text-[color:var(--picnic-ink)]`}>
+            {doc.title}
+          </h1>
+          {showSubtitle ? (
+            <p className="max-w-2xl text-sm text-[color:var(--picnic-ink)]/80 md:text-base">
+              {doc.subtitle}
+            </p>
+          ) : null}
+          {doc.music ? (
+            <div className="flex flex-wrap items-center gap-3 rounded-full border border-white/70 bg-white/80 px-4 py-2 text-xs uppercase tracking-[0.3em] text-[color:var(--picnic-ink)]/80">
               <button
                 type="button"
-                onClick={triggerYesAnimation}
-                onAnimationEnd={() => setIsYesAnimating(false)}
-                className={`relative flex h-44 w-44 flex-col items-center justify-center rounded-full border border-amber-200 bg-white text-slate-900 shadow-[0_30px_70px_-50px_rgba(251,146,60,0.55)] transition hover:-translate-y-0.5 ${
-                  isYesAnimating ? "sunlit-pop" : ""
-                }`}
+                onClick={() => setIsPlaying((prev) => !prev)}
+                aria-pressed={isPlaying}
+                className="rounded-full border border-[color:var(--picnic-ink)]/40 bg-[color:var(--picnic-butter)] px-4 py-2 text-[0.6rem] font-semibold uppercase tracking-[0.35em] text-[color:var(--picnic-ink)]"
               >
-                {doc.swoonLabel.trim().length > 0 ? (
-                  <span className="text-[0.6rem] font-semibold uppercase tracking-[0.5em] text-amber-400">
-                    {doc.swoonLabel}
-                  </span>
-                ) : null}
-                <span className="mt-2 text-3xl font-semibold uppercase tracking-[0.2em] text-amber-500">
-                  {doc.swoonHeadline.trim().length > 0 ? doc.swoonHeadline : "Yes"}
-                </span>
+                {isPlaying ? "Pause" : "Play"}
               </button>
+              <span>
+                <span aria-hidden="true">&#9835;</span> {doc.music.name}
+              </span>
+              <audio ref={audioRef} src={doc.music.url} preload="metadata" />
             </div>
-            {doc.swoonBody.trim().length > 0 ? (
-              <p className="max-w-xs text-center text-sm text-slate-700">
-                {doc.swoonBody}
-              </p>
-            ) : null}
+          ) : null}
+          <div className="picnic-route-hint">
+            Meet me here
           </div>
         </header>
 
-        <section className="space-y-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="preview-heading text-2xl text-slate-900 md:text-3xl">
-              {doc.promiseTitle}
+        <motion.section className="picnic-stop" {...revealProps}>
+          <div className="picnic-pin" aria-hidden="true" />
+          <div className="picnic-card">
+            <span className="picnic-label">Pack the basket</span>
+            <h2 className="preview-heading text-2xl text-[color:var(--picnic-ink)] md:text-3xl">
+              Pick your five
             </h2>
-            <span className="text-xs uppercase tracking-[0.3em] text-amber-500">
-              Quotes and poems
-            </span>
+            <p className="mt-2 text-sm text-[color:var(--picnic-ink)]/70">
+              {selectedBasket.length > 0
+                ? `Selected ${selectedBasket.length} of 5 items.`
+                : DEFAULT_BASKET_HINT}
+            </p>
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              {basketItems.map((item) => {
+                const isSelected = selectedSet.has(item.id);
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => toggleBasketItem(item.id)}
+                    aria-pressed={isSelected}
+                    className={`picnic-item ${isSelected ? "is-selected" : ""}`}
+                  >
+                    <span className="picnic-item-title">{item.label}</span>
+                    {item.detail ? (
+                      <span className="picnic-item-detail">{item.detail}</span>
+                    ) : null}
+                    <span className="picnic-item-check">
+                      {isSelected ? "Picked" : "Add"}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-          {promiseItems.length > 0 ? (
-            <div className="grid gap-4 md:grid-cols-2">
-              {promiseItems.map((item, index) => (
-                <blockquote
-                  key={`${item}-${index}`}
-                  className="sunlit-rise relative rounded-[2rem] border border-amber-100 bg-white/90 px-6 py-5 text-sm text-slate-700 shadow-[0_24px_55px_-45px_rgba(251,146,60,0.45)]"
-                  style={{ animationDelay: `${index * 0.12}s` }}
-                >
-                  <span className="text-3xl text-amber-300">"</span>
-                  <p className="mt-2 text-sm text-slate-700">{item}</p>
-                </blockquote>
-              ))}
-            </div>
-          ) : (
-            <div className="rounded-[2rem] border border-amber-100 bg-white/90 px-6 py-5 text-sm text-slate-700">
-              Add a few short lines to sprinkle around the page.
-            </div>
-          )}
-        </section>
-
-        <section className="space-y-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="preview-heading text-2xl text-slate-900 md:text-3xl">
-              Picnic basket
-            </h2>
-            <span className="text-xs uppercase tracking-[0.3em] text-amber-500">
-              Little details
-            </span>
-          </div>
-          {perkCards.length > 0 ? (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {perkCards.map((card, index) => (
-                <div
-                  key={`${card.title}-${index}`}
-                  className="sunlit-rise relative bg-white/90 px-5 py-4 text-sm text-slate-700 shadow-[0_20px_40px_-32px_rgba(251,146,60,0.45)]"
-                  style={{
-                    animationDelay: `${index * 0.1}s`,
-                    clipPath:
-                      "polygon(6% 0, 94% 0, 100% 50%, 94% 100%, 6% 100%, 0 50%)",
-                  }}
-                >
-                  <span
-                    aria-hidden="true"
-                    className="absolute inset-0"
-                    style={{
-                      border: "1px solid rgba(251,191,36,0.35)",
-                      clipPath:
-                        "polygon(6% 0, 94% 0, 100% 50%, 94% 100%, 6% 100%, 0 50%)",
-                    }}
-                  />
-                  <span
-                    aria-hidden="true"
-                    className="absolute right-4 top-4 h-2 w-2 rounded-full"
-                    style={{ backgroundColor: "var(--sunlit-accent)" }}
-                  />
-                  {card.title.trim().length > 0 ? (
-                    <p className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-500">
-                      {card.title}
-                    </p>
-                  ) : null}
-                  {card.body.trim().length > 0 ? (
-                    <p className="mt-2 text-sm text-slate-700">{card.body}</p>
-                  ) : null}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="rounded-[2rem] border border-amber-100 bg-white/90 px-6 py-5 text-sm text-slate-700">
-              Add a few basket details in the builder.
-            </div>
-          )}
-        </section>
+        </motion.section>
 
         {orderedSections.map((section) => {
           if (section === "gallery") {
             return (
-              <section key="gallery" className="space-y-8">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h2 className="preview-heading text-2xl text-slate-900 md:text-3xl">
-                    Storybook photos
+              <motion.section key="gallery" className="picnic-stop" {...revealProps}>
+                <div className="picnic-pin" aria-hidden="true" />
+                <div className="picnic-card">
+                  <span className="picnic-label">Trail moments</span>
+                  <h2 className="preview-heading text-2xl text-[color:var(--picnic-ink)] md:text-3xl">
+                    Postcards on a string
                   </h2>
-                  <span className="text-xs uppercase tracking-[0.3em] text-amber-500">
-                    Picnic snaps
-                  </span>
-                </div>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {photos.map((photo, index) => (
-                    <div
-                      key={`${photo.id}-${index}`}
-                      className="sunlit-rise"
-                      style={{ animationDelay: `${index * 0.12}s` }}
-                    >
-                      <div
-                        className="relative overflow-hidden bg-white/95 p-3 shadow-[0_24px_60px_-45px_rgba(251,146,60,0.5)]"
-                        style={{
-                          transform: `rotate(${PHOTO_TILTS[index % PHOTO_TILTS.length]})`,
-                          borderRadius: "1.75rem",
-                        }}
-                      >
-                        <span
-                          aria-hidden="true"
-                          className="absolute left-1/2 top-2 h-3 w-12 -translate-x-1/2 rounded-full bg-amber-200/80"
-                        />
-                        <div className="relative aspect-[4/5] overflow-hidden rounded-[1.4rem] bg-amber-50">
-                          {photo.src ? (
-                            <Image
-                              src={photo.src}
-                              alt={photo.alt ?? `Photo ${index + 1}`}
-                              fill
-                              sizes="(min-width: 1024px) 240px, (min-width: 640px) 45vw, 90vw"
-                              className="object-cover"
-                              style={photoFilterStyle}
-                              unoptimized={photo.src.startsWith("data:")}
-                            />
-                          ) : (
-                            <div
-                              className={`h-full w-full bg-gradient-to-br ${theme.gradient}`}
-                              style={photoFilterStyle}
-                            />
-                          )}
+                  <div className="picnic-string mt-6">
+                    <div className="grid gap-4 md:grid-cols-3">
+                      {photos.slice(0, 3).map((photo, index) => (
+                        <div
+                          key={`${photo.id}-${index}`}
+                          className={`picnic-postcard postcard-${index % 3}`}
+                        >
+                          <div className="relative aspect-[4/5] overflow-hidden rounded-[1.5rem]">
+                            {photo.src ? (
+                              <Image
+                                src={photo.src}
+                                alt={photo.alt ?? `Moment ${index + 1}`}
+                                fill
+                                sizes="(min-width: 1024px) 240px, (min-width: 640px) 45vw, 80vw"
+                                className="object-cover"
+                                style={photoFilterStyle}
+                                unoptimized={photo.src.startsWith("data:")}
+                              />
+                            ) : (
+                              <div
+                                className={`h-full w-full bg-gradient-to-br ${theme.gradient}`}
+                                style={photoFilterStyle}
+                              />
+                            )}
+                          </div>
+                          <p className="mt-3 text-xs uppercase tracking-[0.3em] text-[color:var(--picnic-ink)]/70">
+                            {moments[index] ?? `Moment ${index + 1}`}
+                          </p>
                         </div>
-                      </div>
+                      ))}
                     </div>
-                  ))}
+                  </div>
                 </div>
-              </section>
+              </motion.section>
             );
           }
 
           if (section === "love-note") {
             return (
-              <section key="love-note" className="space-y-8">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h2 className="preview-heading text-2xl text-slate-900 md:text-3xl">
-                    Little poems
+              <motion.section key="love-note" className="picnic-stop" {...revealProps}>
+                <div className="picnic-pin" aria-hidden="true" />
+                <div className="picnic-card">
+                  <span className="picnic-label">Sunset note</span>
+                  <h2 className="preview-heading text-2xl text-[color:var(--picnic-ink)] md:text-3xl">
+                    {loveNoteTitles[0] ?? "Sunset note"}
                   </h2>
-                  <span className="text-xs uppercase tracking-[0.3em] text-amber-500">
-                    Handwritten
-                  </span>
-                </div>
-                <div className="grid gap-6 md:grid-cols-2">
-                  {loveNotes.length > 0 ? (
-                    loveNotes.map((note, index) => {
-                      const title =
-                        doc.loveNoteTitles?.[index]?.trim() ||
-                        (index === 0 ? "Love note" : "Golden note");
-                      return (
-                        <div
-                          key={`love-note-${index}`}
-                          className="sunlit-rise"
-                          style={{ animationDelay: `${index * 0.12}s` }}
+                  {noteLines.length > 0 ? (
+                    <div className="mt-5 space-y-3">
+                      {noteLines.map((line, index) => (
+                        <motion.p
+                          key={`${line}-${index}`}
+                          initial={prefersReducedMotion ? undefined : { opacity: 0, y: 10 }}
+                          whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+                          viewport={{ once: true, amount: 0.4 }}
+                          transition={{ duration: 0.4, delay: index * 0.08 }}
+                          className="text-sm text-[color:var(--picnic-ink)]/80 md:text-base"
                         >
-                          <article
-                            className="relative overflow-hidden rounded-[2.5rem] border border-amber-100 bg-white/95 p-8 shadow-[0_28px_70px_-55px_rgba(251,146,60,0.45)] sunlit-page"
-                            style={{
-                              transform: `rotate(${NOTE_TILTS[index % NOTE_TILTS.length]})`,
-                            }}
-                          >
-                            <span
-                              aria-hidden="true"
-                              className="sunlit-spark absolute right-6 top-6 h-2 w-2 rounded-full"
-                              style={{ backgroundColor: "var(--sunlit-accent)" }}
-                            />
-                            <h3 className="preview-heading text-2xl text-slate-900 md:text-3xl">
-                              {title}
-                            </h3>
-                            <p className="mt-4 text-sm text-slate-700 md:text-base">
-                              {note}
-                            </p>
-                          </article>
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <div className="rounded-[2.5rem] border border-amber-100 bg-white/95 p-8 text-center text-sm text-slate-700">
-                      Add a love note to share your favorite memories.
+                          {line}
+                        </motion.p>
+                      ))}
                     </div>
+                  ) : (
+                    <p className="mt-4 text-sm text-[color:var(--picnic-ink)]/70">
+                      Add a love note in the builder.
+                    </p>
                   )}
+
+                  <div className="mt-6 rounded-[1.5rem] border border-white/60 bg-white/70 p-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--picnic-ink)]/70">
+                      Personalized
+                    </p>
+                    {personalizedLines.length > 0 ? (
+                      <ul className="mt-3 space-y-2 text-sm text-[color:var(--picnic-ink)]/80">
+                        {personalizedLines.map((line, index) => (
+                          <li key={`${line}-${index}`}>{line}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="mt-3 text-sm text-[color:var(--picnic-ink)]/60">
+                        {DEFAULT_BASKET_HINT}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </section>
+              </motion.section>
             );
           }
 
           return (
-            <section key="moments" className="space-y-8">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <h2 className="preview-heading text-2xl text-slate-900 md:text-3xl">
+            <motion.section key="moments" className="picnic-stop" {...revealProps}>
+              <div className="picnic-pin" aria-hidden="true" />
+              <div className="picnic-card">
+                <span className="picnic-label">Map notes</span>
+                <h2 className="preview-heading text-2xl text-[color:var(--picnic-ink)] md:text-3xl">
                   {doc.momentsTitle}
                 </h2>
-                <span className="text-xs uppercase tracking-[0.3em] text-amber-500">
-                  Sunlit reasons
-                </span>
-              </div>
-              <div className="relative rounded-[2.5rem] border border-amber-100 bg-white/95 p-6 shadow-[0_26px_60px_-48px_rgba(251,146,60,0.45)]">
-                <div
-                  aria-hidden="true"
-                  className="sunlit-route-vertical absolute left-6 top-6 hidden h-[calc(100%-3rem)] w-px md:block"
-                />
                 {moments.length > 0 ? (
-                  <div className="space-y-5">
+                  <div className="mt-5 space-y-3">
                     {moments.map((moment, index) => (
                       <div
                         key={`${moment}-${index}`}
-                        className="sunlit-rise flex items-start gap-4"
-                        style={{ animationDelay: `${index * 0.12}s` }}
+                        className="picnic-note"
                       >
-                        <span className="text-[0.65rem] font-semibold uppercase tracking-[0.4em] text-amber-400">
+                        <span className="picnic-note-index">
                           {String(index + 1).padStart(2, "0")}
                         </span>
-                        <span
-                          aria-hidden="true"
-                          className="sunlit-spark mt-2 h-2 w-2 rounded-full"
-                          style={{
-                            backgroundColor: "var(--sunlit-accent)",
-                            animationDelay: `${index * 0.3}s`,
-                          }}
-                        />
-                        <p className="text-sm text-slate-700">{moment}</p>
+                        <span className="text-sm text-[color:var(--picnic-ink)]/80">
+                          {moment}
+                        </span>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-slate-700">
-                    Add your reasons in the builder.
+                  <p className="mt-4 text-sm text-[color:var(--picnic-ink)]/70">
+                    Add map notes in the builder.
                   </p>
                 )}
               </div>
-            </section>
+            </motion.section>
           );
         })}
 
-        <section className="space-y-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="preview-heading text-2xl text-slate-900 md:text-3xl">
-              {doc.datePlanTitle}
+        <motion.section className="picnic-stop" {...revealProps}>
+          <div className="picnic-pin" aria-hidden="true" />
+          <div className="picnic-card">
+            <span className="picnic-label">{doc.promiseTitle}</span>
+            <h2 className="preview-heading text-2xl text-[color:var(--picnic-ink)] md:text-3xl">
+              Our snack list
             </h2>
-            <span className="text-xs uppercase tracking-[0.3em] text-amber-500">
-              Picnic plan
-            </span>
-          </div>
-          {datePlanSteps.length > 0 ? (
-            <div className="relative">
-              <div
-                aria-hidden="true"
-                className="sunlit-route absolute left-6 right-6 top-8 hidden h-px md:block"
-              />
-              <div className="grid gap-4 md:grid-cols-3">
-                {datePlanSteps.map((step, index) => (
-                  <div
-                    key={`${step.title}-${index}`}
-                    className="sunlit-rise rounded-[2rem] border border-amber-100 bg-white/95 p-5 shadow-[0_22px_50px_-40px_rgba(251,146,60,0.45)]"
-                    style={{ animationDelay: `${index * 0.12}s` }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span
-                        className="flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold text-white"
-                        style={{
-                          background:
-                            "linear-gradient(135deg, var(--sunlit-accent), var(--sunlit-accent-strong))",
-                        }}
-                      >
-                        {index + 1}
-                      </span>
-                      {step.title.trim().length > 0 ? (
-                        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-500">
-                          {step.title}
-                        </p>
-                      ) : null}
-                    </div>
-                    {step.body.trim().length > 0 ? (
-                      <p className="mt-3 text-sm text-slate-700">
-                        {step.body}
-                      </p>
-                    ) : null}
-                  </div>
+            {promiseItems.length > 0 ? (
+              <div className="mt-6 flex flex-wrap gap-3">
+                {promiseItems.map((item, index) => (
+                  <span key={`${item}-${index}`} className="picnic-tag">
+                    <span className="picnic-tag-label">
+                      {snackLabels[index % snackLabels.length]}
+                    </span>
+                    {item}
+                  </span>
                 ))}
               </div>
+            ) : (
+              <p className="mt-4 text-sm text-[color:var(--picnic-ink)]/70">
+                Add snack notes in the builder.
+              </p>
+            )}
+          </div>
+        </motion.section>
+
+        <motion.section className="picnic-stop" {...revealProps}>
+          <div className="picnic-pin" aria-hidden="true" />
+          <div className="picnic-card">
+            <span className="picnic-label">{doc.swoonLabel || "Picnic ticket"}</span>
+            <h2 className="preview-heading text-2xl text-[color:var(--picnic-ink)] md:text-3xl">
+              Admit one: Sunlit Picnic
+            </h2>
+            <div className="picnic-ticket mt-6">
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-[color:var(--picnic-ink)]/70">
+                  Ticket holder
+                </p>
+                <p className="mt-2 text-base font-semibold text-[color:var(--picnic-ink)]">
+                  {doc.swoonBody.trim().length > 0
+                    ? doc.swoonBody
+                    : "Bring your best smile."}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setTicketStamped(true)}
+                className="picnic-stamp-btn"
+              >
+                {doc.swoonHeadline.trim().length > 0
+                  ? doc.swoonHeadline
+                  : "YES"}
+              </button>
+              {ticketStamped ? (
+                <motion.div
+                  className="picnic-stamp"
+                  initial={{ scale: 0.6, rotate: -10, opacity: 0 }}
+                  animate={{ scale: 1, rotate: -6, opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  Approved
+                </motion.div>
+              ) : null}
             </div>
-          ) : (
-            <div className="rounded-[2rem] border border-amber-100 bg-white/95 px-6 py-5 text-sm text-slate-700">
-              Add a plan in the builder.
-            </div>
-          )}
-        </section>
+            {ticketStamped ? (
+              <div className="mt-6 rounded-[1.5rem] border border-white/70 bg-white/80 p-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--picnic-ink)]/70">
+                  {doc.datePlanTitle}
+                </p>
+                {datePlanSteps.length > 0 ? (
+                  <ul className="mt-3 space-y-2 text-sm text-[color:var(--picnic-ink)]/80">
+                    {datePlanSteps.map((step, index) => (
+                      <li key={`${step.title}-${index}`}>
+                        <span className="font-semibold">{step.title}:</span> {step.body}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="mt-3 text-sm text-[color:var(--picnic-ink)]/70">
+                    Add the next date idea in the builder.
+                  </p>
+                )}
+              </div>
+            ) : null}
+          </div>
+        </motion.section>
       </div>
+
+      <style jsx global>{`
+        .picnic-map {
+          background-image: linear-gradient(
+              120deg,
+              rgba(255, 255, 255, 0.7) 0%,
+              rgba(255, 255, 255, 0.3) 45%,
+              rgba(255, 255, 255, 0.7) 100%
+            ),
+            linear-gradient(
+              180deg,
+              rgba(168, 216, 240, 0.4) 0%,
+              rgba(255, 247, 230, 0.6) 35%,
+              rgba(185, 200, 163, 0.45) 100%
+            ),
+            repeating-linear-gradient(
+              90deg,
+              rgba(46, 42, 36, 0.06) 0,
+              rgba(46, 42, 36, 0.06) 1px,
+              transparent 1px,
+              transparent 90px
+            ),
+            repeating-linear-gradient(
+              0deg,
+              rgba(46, 42, 36, 0.05) 0,
+              rgba(46, 42, 36, 0.05) 1px,
+              transparent 1px,
+              transparent 110px
+            );
+          opacity: 0.6;
+        }
+
+        .picnic-grain {
+          background-image: linear-gradient(
+              0deg,
+              rgba(255, 255, 255, 0.25),
+              rgba(255, 255, 255, 0.25) 50%,
+              transparent 50%,
+              transparent 100%
+            ),
+            radial-gradient(circle, rgba(46, 42, 36, 0.08) 0%, transparent 70%);
+          background-size: 4px 4px, 160px 160px;
+          opacity: 0.2;
+          mix-blend-mode: multiply;
+        }
+
+        .picnic-bokeh {
+          background-image: radial-gradient(
+              rgba(255, 255, 255, 0.35) 2px,
+              transparent 2px
+            ),
+            radial-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+          background-size: 140px 140px, 220px 220px;
+          opacity: 0.25;
+        }
+
+        .picnic-cloud {
+          position: absolute;
+          top: 8%;
+          width: 200px;
+          height: 90px;
+          border-radius: 999px;
+          background: radial-gradient(circle, rgba(255, 255, 255, 0.9), transparent 70%);
+          filter: blur(2px);
+          opacity: 0.6;
+        }
+
+        .cloud-left {
+          left: 8%;
+        }
+
+        .cloud-right {
+          right: 6%;
+          top: 18%;
+        }
+
+        .picnic-label {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          border-radius: 999px;
+          background: rgba(255, 255, 255, 0.8);
+          border: 1px solid rgba(46, 42, 36, 0.2);
+          padding: 0.35rem 1rem;
+          font-size: 0.6rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.3em;
+          color: var(--picnic-ink);
+        }
+
+        .picnic-route-hint {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          border-radius: 999px;
+          border: 1px dashed rgba(46, 42, 36, 0.25);
+          padding: 0.4rem 1.1rem;
+          font-size: 0.65rem;
+          text-transform: uppercase;
+          letter-spacing: 0.25em;
+          color: var(--picnic-ink);
+          background: rgba(255, 255, 255, 0.6);
+        }
+
+        .picnic-stop {
+          position: relative;
+          padding-left: 2.5rem;
+        }
+
+        .picnic-stop::before {
+          content: "";
+          position: absolute;
+          left: 0.7rem;
+          top: 0.5rem;
+          bottom: 0.5rem;
+          width: 2px;
+          background: repeating-linear-gradient(
+            180deg,
+            rgba(46, 42, 36, 0.2) 0,
+            rgba(46, 42, 36, 0.2) 6px,
+            transparent 6px,
+            transparent 16px
+          );
+        }
+
+        .picnic-pin {
+          position: absolute;
+          left: 0.15rem;
+          top: 1.2rem;
+          height: 20px;
+          width: 20px;
+          border-radius: 999px;
+          border: 2px solid var(--picnic-tangerine);
+          background: var(--picnic-cream);
+          box-shadow: 0 6px 16px rgba(247, 163, 91, 0.35);
+        }
+
+        .picnic-card {
+          border-radius: 2rem;
+          background: rgba(255, 255, 255, 0.85);
+          border: 1px solid rgba(46, 42, 36, 0.12);
+          padding: 2rem;
+          box-shadow: 0 30px 80px -55px rgba(46, 42, 36, 0.35);
+        }
+
+        .picnic-item {
+          border-radius: 1.5rem;
+          border: 1px solid rgba(46, 42, 36, 0.12);
+          padding: 1rem;
+          text-align: left;
+          background: rgba(255, 255, 255, 0.9);
+          display: flex;
+          flex-direction: column;
+          gap: 0.4rem;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .picnic-item:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 18px 30px -22px rgba(46, 42, 36, 0.35);
+        }
+
+        .picnic-item.is-selected {
+          border-color: rgba(247, 163, 91, 0.6);
+          box-shadow: 0 20px 40px -28px rgba(247, 163, 91, 0.4);
+        }
+
+        .picnic-item-title {
+          font-size: 0.85rem;
+          font-weight: 600;
+          color: var(--picnic-ink);
+          text-transform: uppercase;
+          letter-spacing: 0.2em;
+        }
+
+        .picnic-item-detail {
+          font-size: 0.75rem;
+          color: rgba(46, 42, 36, 0.7);
+        }
+
+        .picnic-item-check {
+          margin-top: 0.4rem;
+          font-size: 0.6rem;
+          text-transform: uppercase;
+          letter-spacing: 0.3em;
+          color: var(--picnic-tangerine);
+        }
+
+        .picnic-string {
+          position: relative;
+          padding-top: 1.5rem;
+        }
+
+        .picnic-string::before {
+          content: "";
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 0.6rem;
+          height: 2px;
+          background: rgba(46, 42, 36, 0.2);
+        }
+
+        .picnic-postcard {
+          border-radius: 1.8rem;
+          background: rgba(255, 255, 255, 0.9);
+          border: 1px solid rgba(46, 42, 36, 0.15);
+          padding: 0.8rem;
+          box-shadow: 0 25px 50px -38px rgba(46, 42, 36, 0.35);
+        }
+
+        .postcard-0 {
+          transform: rotate(-2deg);
+        }
+
+        .postcard-1 {
+          transform: rotate(1.5deg);
+        }
+
+        .postcard-2 {
+          transform: rotate(-1deg);
+        }
+
+        .picnic-note {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          border-radius: 1.4rem;
+          background: rgba(255, 255, 255, 0.8);
+          padding: 0.8rem 1rem;
+          border: 1px dashed rgba(46, 42, 36, 0.2);
+        }
+
+        .picnic-note-index {
+          font-size: 0.7rem;
+          text-transform: uppercase;
+          letter-spacing: 0.25em;
+          color: var(--picnic-tangerine);
+        }
+
+        .picnic-tag {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          border-radius: 999px;
+          border: 1px solid rgba(46, 42, 36, 0.2);
+          padding: 0.4rem 0.9rem;
+          background: rgba(255, 255, 255, 0.9);
+          font-size: 0.75rem;
+          color: var(--picnic-ink);
+        }
+
+        .picnic-tag-label {
+          font-size: 0.55rem;
+          letter-spacing: 0.3em;
+          text-transform: uppercase;
+          color: var(--picnic-tangerine);
+        }
+
+        .picnic-ticket {
+          position: relative;
+          display: grid;
+          gap: 1.5rem;
+          border-radius: 2rem;
+          padding: 1.5rem;
+          border: 1px dashed rgba(46, 42, 36, 0.3);
+          background: rgba(255, 255, 255, 0.85);
+        }
+
+        .picnic-stamp-btn {
+          align-self: flex-start;
+          border-radius: 999px;
+          border: 2px solid rgba(46, 42, 36, 0.2);
+          padding: 0.6rem 1.4rem;
+          text-transform: uppercase;
+          letter-spacing: 0.3em;
+          font-weight: 600;
+          background: var(--picnic-butter);
+          color: var(--picnic-ink);
+          box-shadow: 0 12px 30px -20px rgba(247, 163, 91, 0.6);
+        }
+
+        .picnic-stamp {
+          position: absolute;
+          right: 1.5rem;
+          top: 1.5rem;
+          padding: 0.4rem 0.9rem;
+          border: 2px solid rgba(46, 42, 36, 0.3);
+          border-radius: 0.9rem;
+          text-transform: uppercase;
+          letter-spacing: 0.3em;
+          font-size: 0.6rem;
+          background: rgba(247, 163, 91, 0.18);
+          color: var(--picnic-ink);
+        }
+
+        @media (min-width: 768px) {
+          .picnic-stop {
+            padding-left: 3.5rem;
+          }
+        }
+      `}</style>
     </div>
   );
 }

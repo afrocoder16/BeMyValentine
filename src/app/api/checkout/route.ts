@@ -38,9 +38,6 @@ export async function POST(request: Request) {
 
   const fallbackPlan = url.searchParams.get("plan");
   const receivedPlan = payload?.plan ?? fallbackPlan;
-  // Minimal logging to verify payloads in server logs.
-  console.log("checkout plan:", receivedPlan ?? "missing");
-
   if (!isValidPlan(receivedPlan)) {
     return NextResponse.json(
       { error: "Missing or invalid plan" },

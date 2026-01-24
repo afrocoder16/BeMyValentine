@@ -31,6 +31,23 @@ function PreviewAudioControl({ title, src }: PreviewAudioControlProps) {
     };
   }, []);
 
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) {
+      return;
+    }
+    audio.pause();
+    audio.currentTime = 0;
+    if (!src) {
+      setIsPlaying(false);
+      return;
+    }
+    audio
+      .play()
+      .then(() => setIsPlaying(true))
+      .catch(() => setIsPlaying(false));
+  }, [src]);
+
   const handleToggle = async () => {
     const audio = audioRef.current;
     if (!audio) {

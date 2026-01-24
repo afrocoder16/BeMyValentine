@@ -229,6 +229,7 @@ export default function EditorPanel({
   const isMidnightMuse = doc.templateId === "midnight-muse";
   const isSunlitPicnic = doc.templateId === "sunlit-picnic";
   const isGardenParty = doc.templateId === "garden-party";
+  const isRetroLove = doc.templateId === "retro-love";
 
   const photos = [...doc.photos].sort((a, b) => a.order - b.order);
   const photoUsage = photos.length;
@@ -567,27 +568,34 @@ export default function EditorPanel({
 
   const secondaryButtonClasses =
     "inline-flex w-full items-center justify-center gap-2 rounded-full border border-rose-200 bg-white/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-rose-600 shadow-soft transition hover:-translate-y-0.5 hover:border-rose-300 hover:bg-rose-50/70 disabled:cursor-not-allowed disabled:opacity-50";
+  const taglineLabel = isRetroLove ? "Tape label" : "Tagline";
   const momentsSectionTitle = isMidnightMuse
     ? "Reasons to say yes"
     : isSunlitPicnic
       ? "Sunlit reasons"
       : isGardenParty
         ? "Blooming moments"
-      : "Cute moments";
+        : isRetroLove
+          ? "Replay list"
+          : "Cute moments";
   const momentsSectionHelper = isMidnightMuse
     ? "Short lines that explain why the answer is yes."
     : isSunlitPicnic
       ? "Little reasons that feel like sunshine."
       : isGardenParty
         ? "Moments that feel like petals in the air."
-      : "Short highlights you want them to remember.";
+        : isRetroLove
+          ? "Short captions for the replay list."
+          : "Short highlights you want them to remember.";
   const momentsOrderLabel = isMidnightMuse
     ? "Reasons"
     : isSunlitPicnic
       ? "Sunlit reasons"
       : isGardenParty
         ? "Blooming moments"
-      : "Cute moments";
+        : isRetroLove
+          ? "Replay list"
+          : "Cute moments";
   const midnightPaletteOptions = [
     {
       value: "velvet",
@@ -636,7 +644,7 @@ export default function EditorPanel({
       >
         <label className="block">
           <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
-            Tagline
+            {taglineLabel}
           </span>
           <input
             value={doc.tagline}
@@ -1566,6 +1574,39 @@ export default function EditorPanel({
             </div>
           </EditorSection>
         </>
+      ) : null}
+
+      {isRetroLove ? (
+        <EditorSection
+          title="Neon chorus"
+          helper="Edit the chorus headline and lines."
+        >
+          <label className="block">
+            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+              Chorus headline
+            </span>
+            <input
+              value={doc.promiseTitle}
+              onChange={handleSimpleFieldChange("promiseTitle")}
+              className="mt-2 w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+            />
+          </label>
+          <div className="space-y-3">
+            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+              Chorus lines
+            </span>
+            <div className="space-y-2">
+              {doc.promiseItems.map((item, index) => (
+                <input
+                  key={`promise-${index}`}
+                  value={item}
+                  onChange={handlePromiseChange(index)}
+                  className="w-full rounded-2xl border border-white/70 bg-white/80 px-3 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+                />
+              ))}
+            </div>
+          </div>
+        </EditorSection>
       ) : null}
 
       <EditorSection title={momentsSectionTitle} helper={momentsSectionHelper}>

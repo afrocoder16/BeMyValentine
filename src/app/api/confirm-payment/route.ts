@@ -13,6 +13,24 @@ if (!stripeSecret) {
   throw new Error("Missing STRIPE_SECRET_KEY");
 }
 const stripe = new Stripe(stripeSecret);
+const isDev = process.env.NODE_ENV !== "production";
+
+const maskSessionId = (value: string) => {
+  if (!value) {
+    return "missing";
+  }
+  if (value.length <= 10) {
+    return value;
+  }
+  return `${value.slice(0, 6)}...${value.slice(-4)}`;
+};
+
+const log = (...args: unknown[]) => {
+  if (!isDev) {
+    return;
+  }
+  console.log(...args);
+};
 
 type ConfirmPaymentBody = {
   session_id?: unknown;
@@ -36,20 +54,20 @@ export async function POST(request: Request) {
     payload && typeof payload.session_id === "string" ? payload.session_id : "";
 
   if (!sessionId) {
-    console.log("confirm-payment: missing session_id");
+    log("confirm-payment: missing session_id");
     return NextResponse.json(
       { verified: false, error: "missing_session_id" },
       { status: 400 }
     );
   }
 
-  console.log("confirm-payment: session", sessionId);
+  log("confirm-payment: session", maskSessionId(sessionId));
 
   let session: Stripe.Checkout.Session;
   try {
     session = await stripe.checkout.sessions.retrieve(sessionId);
   } catch (error) {
-    console.log(
+    log(
       "confirm-payment: stripe session retrieve failed",
       error instanceof Error ? error.message : error
     );
@@ -57,9 +75,9 @@ export async function POST(request: Request) {
   }
 
   if (session.payment_status !== "paid") {
-    console.log(
+    log(
       "confirm-payment: unpaid session",
-      sessionId,
+      maskSessionId(sessionId),
       session.payment_status
     );
     return NextResponse.json({ verified: false, error: "not_paid" });
@@ -74,7 +92,7 @@ export async function POST(request: Request) {
     .maybeSingle();
 
   if (existingError) {
-    console.log(
+    log(
       "confirm-payment: existing page lookup failed",
       existingError.message
     );
@@ -91,7 +109,7 @@ export async function POST(request: Request) {
     .maybeSingle();
 
   if (pendingError || !pending) {
-    console.log(
+    log(
       "confirm-payment: pending publish missing",
       pendingError?.message ?? "no row"
     );
@@ -99,7 +117,7 @@ export async function POST(request: Request) {
   }
 
   if (!isValidTemplateId(pending.template_id)) {
-    console.log("confirm-payment: invalid template", pending.template_id);
+    log("confirm-payment: invalid template", pending.template_id);
     return NextResponse.json({ verified: false, error: "invalid_template" });
   }
 
@@ -116,7 +134,7 @@ export async function POST(request: Request) {
     .eq("stripe_session_id", sessionId);
 
   if (paidError) {
-    console.log("confirm-payment: failed to mark paid", paidError.message);
+    log("confirm-payment: failed to mark paid", paidError.message);
   }
 
   const { error: entitlementError } = await supabase.from("entitlements").upsert(
@@ -133,7 +151,7 @@ export async function POST(request: Request) {
   );
 
   if (entitlementError) {
-    console.log(
+    log(
       "confirm-payment: entitlement upsert failed",
       entitlementError.message
     );
@@ -147,7 +165,7 @@ export async function POST(request: Request) {
     });
     return NextResponse.json({ verified: true, slug: result.slug });
   } catch (error) {
-    console.log(
+    log(
       "confirm-payment: publish failed",
       error instanceof Error ? error.message : error
     );
