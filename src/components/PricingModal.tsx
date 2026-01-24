@@ -14,11 +14,7 @@ type PricingModalProps = {
 };
 
 const planFeatures: Record<PlanId, string[]> = {
-  normal: [
-    "Up to 6 photos",
-    "Cute Classic + Midnight Muse",
-    "1 share link",
-  ],
+  normal: ["Up to 6 photos", "All templates", "1 share link"],
   pro: ["Up to 15 photos", "All templates", "1 share link"],
 };
 

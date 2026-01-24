@@ -101,11 +101,11 @@ const templates: Template[] = [
   },
   {
     id: "retro-love",
-    name: "Retro Love",
-    vibeTagline: "Bold, nostalgic, fun.",
-    description: "Vintage poster energy with rich contrast and pop.",
+    name: "Retro Love: VHS Arcade",
+    vibeTagline: "VHS arcade, neon, kinetic.",
+    description: "Playable VHS arcade love story with snap scenes and bold type.",
     demo: {
-      caption: "Bold pops with a vintage poster beat.",
+      caption: "VHS arcade glow with playable love scenes.",
       images: [
         "/demos/retro-love/1.jpg",
         "/demos/retro-love/2.jpg",

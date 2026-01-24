@@ -44,7 +44,8 @@ create table if not exists public.pending_publishes (
   template_id text not null,
   plan text not null,
   doc jsonb not null,
-  created_at timestamp with time zone default now()
+  created_at timestamp with time zone default now(),
+  paid_at timestamp with time zone
 );
 
 create index if not exists pending_publishes_session_idx on public.pending_publishes (stripe_session_id);

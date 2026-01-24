@@ -37,20 +37,20 @@ const demoCopyByTemplateId: Record<string, DemoCopy> = {
     loveNote:
       "You are the spark in my late-night thoughts and the calm in my chaos. Every time I see you, the world slows down just enough to breathe.",
     cuteMoments: [
-      "The car rides with the windows down.",
-      "The city lights that shine brighter with you.",
-      "Our last kiss before the music ended.",
+      "The way the city hums when you are beside me.",
+      "The slow dance we do without music.",
+      "That look you give me when the night is ours.",
     ],
   },
   "sunlit-picnic": {
     title: "Will u be my Valentine?",
-    intro: "You are my sunny day, even when the clouds roll in.",
+    intro: "You are my sunny day, the soft breeze, and the calm I keep.",
     loveNote:
-      "Being with you feels like a warm breeze and a full heart. I love the way you turn simple moments into something I want to keep forever.",
+      "Being with you feels like golden light on my skin and a soft laugh in the air. Thank you for making ordinary days feel like a picnic I never want to leave.",
     cuteMoments: [
-      "The shared bites and the shared laughs.",
-      "That spontaneous dance in the kitchen.",
-      "The way you make every photo feel alive.",
+      "The way your smile follows the sunlight.",
+      "Our slow walks that turn into adventures.",
+      "The calm that shows up when you are near.",
     ],
   },
   "garden-party": {
@@ -59,20 +59,19 @@ const demoCopyByTemplateId: Record<string, DemoCopy> = {
     loveNote:
       "You make everything feel gentle and bright. Thank you for being my calm, my cheer, and my favorite bloom in every season.",
     cuteMoments: [
-      "The long walks that never feel long.",
-      "The tiny surprises you leave for me.",
-      "The way you make home feel like home.",
+      "The quiet strolls under warm skies.",
+      "The tiny surprises tucked in every day.",
+      "The way you make everything feel like home.",
     ],
   },
   "retro-love": {
-    title: "Will u be my Valentine?",
-    intro: "Cue the vintage soundtrack and the boldest smile.",
-    loveNote:
-      "You are my favorite throwback and my best right-now. With you, every day feels like a highlight reel.",
+    title: "I LIKE U",
+    intro: "Insert heart to continue.",
+    loveNote: "You just unlocked the bonus level of us.",
     cuteMoments: [
-      "The dance breaks in the living room.",
-      "The late-night snacks and silly stories.",
-      "That wink that always gets me.",
+      "Arcade glow and late-night laughs.",
+      "The freeze-frame moments I replay.",
+      "Our soundtrack stuck on repeat.",
     ],
   },
 };

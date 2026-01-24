@@ -1,8 +1,8 @@
-import type { TemplateId } from "@/data/templates";
+import { TEMPLATE_IDS, type TemplateId } from "@/data/templates";
 
 export type PlanId = "normal" | "pro";
 
-export const NORMAL_TEMPLATES: TemplateId[] = ["cute-classic", "midnight-muse"];
+export const NORMAL_TEMPLATES: TemplateId[] = [...TEMPLATE_IDS];
 
 export const PLAN_RULES: Record<
   PlanId,
@@ -18,13 +18,7 @@ export const PLAN_RULES: Record<
     label: "Pro",
     price: "$15",
     maxPhotos: 15,
-    templates: [
-      "cute-classic",
-      "midnight-muse",
-      "sunlit-picnic",
-      "garden-party",
-      "retro-love",
-    ],
+    templates: [...TEMPLATE_IDS],
   },
 };
 

@@ -25,7 +25,7 @@ import {
 const MIN_MOMENTS = 3;
 const MAX_MOMENTS = 6;
 const MAX_LOVE_NOTES = 4;
-const MAX_AUDIO_MB = 4;
+const MAX_AUDIO_MB = 15;
 
 const fileToDataUrl = (file: File) =>
   new Promise<string>((resolve, reject) => {
@@ -226,6 +226,9 @@ export default function EditorPanel({
   const momentFocusIndex = useRef<number | null>(null);
   const [pendingPhotoIndex, setPendingPhotoIndex] = useState<number | null>(null);
   const isCuteClassic = doc.templateId === "cute-classic";
+  const isMidnightMuse = doc.templateId === "midnight-muse";
+  const isSunlitPicnic = doc.templateId === "sunlit-picnic";
+  const isGardenParty = doc.templateId === "garden-party";
 
   const photos = [...doc.photos].sort((a, b) => a.order - b.order);
   const photoUsage = photos.length;
@@ -564,6 +567,44 @@ export default function EditorPanel({
 
   const secondaryButtonClasses =
     "inline-flex w-full items-center justify-center gap-2 rounded-full border border-rose-200 bg-white/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-rose-600 shadow-soft transition hover:-translate-y-0.5 hover:border-rose-300 hover:bg-rose-50/70 disabled:cursor-not-allowed disabled:opacity-50";
+  const momentsSectionTitle = isMidnightMuse
+    ? "Reasons to say yes"
+    : isSunlitPicnic
+      ? "Sunlit reasons"
+      : isGardenParty
+        ? "Blooming moments"
+      : "Cute moments";
+  const momentsSectionHelper = isMidnightMuse
+    ? "Short lines that explain why the answer is yes."
+    : isSunlitPicnic
+      ? "Little reasons that feel like sunshine."
+      : isGardenParty
+        ? "Moments that feel like petals in the air."
+      : "Short highlights you want them to remember.";
+  const momentsOrderLabel = isMidnightMuse
+    ? "Reasons"
+    : isSunlitPicnic
+      ? "Sunlit reasons"
+      : isGardenParty
+        ? "Blooming moments"
+      : "Cute moments";
+  const midnightPaletteOptions = [
+    {
+      value: "velvet",
+      label: "Velvet",
+      swatch: "linear-gradient(135deg, #f43f5e, #f472b6)",
+    },
+    {
+      value: "ember",
+      label: "Ember",
+      swatch: "linear-gradient(135deg, #f97316, #fb923c)",
+    },
+    {
+      value: "moonlight",
+      label: "Moonlight",
+      swatch: "linear-gradient(135deg, #0ea5e9, #38bdf8)",
+    },
+  ];
 
   return (
     <div className="flex flex-col gap-5">
@@ -767,7 +808,7 @@ export default function EditorPanel({
                     ? "Gallery"
                     : section === "love-note"
                       ? "Love note"
-                      : "Cute moments";
+                      : momentsOrderLabel;
                 return (
                   <div
                     key={`section-${section}`}
@@ -855,6 +896,40 @@ export default function EditorPanel({
             ))}
           </div>
         </div>
+
+        {isMidnightMuse ? (
+          <div className="space-y-3">
+            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+              Accent palette
+            </span>
+            <div className="grid grid-cols-3 gap-2">
+              {midnightPaletteOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() =>
+                    updateDoc((prev) => ({
+                      ...prev,
+                      midnightPalette: option.value as BuilderDoc["midnightPalette"],
+                    }))
+                  }
+                  className={`flex items-center justify-center gap-2 rounded-full px-3 py-2 text-xs font-semibold uppercase tracking-[0.25em] transition ${
+                    doc.midnightPalette === option.value
+                      ? "bg-rose-600 text-white shadow-soft"
+                      : "border border-rose-200 bg-white/80 text-rose-600 hover:bg-rose-50/70"
+                  }`}
+                >
+                  <span
+                    aria-hidden="true"
+                    className="h-3 w-3 rounded-full"
+                    style={{ backgroundImage: option.swatch }}
+                  />
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
       </EditorSection>
 
       {isCuteClassic ? (
@@ -1012,10 +1087,488 @@ export default function EditorPanel({
         </>
       ) : null}
 
-      <EditorSection
-        title="Cute moments"
-        helper="Short highlights you want them to remember."
-      >
+      {isMidnightMuse ? (
+        <>
+          <EditorSection
+            title="Muse spotlight"
+            helper="Edit the answer card and glow words."
+          >
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Answer label
+              </span>
+              <input
+                value={doc.swoonLabel}
+                onChange={handleSwoonChange("swoonLabel")}
+                className="mt-2 w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+              />
+            </label>
+
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Answer headline
+              </span>
+              <input
+                value={doc.swoonHeadline}
+                onChange={handleSwoonChange("swoonHeadline")}
+                className="mt-2 w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+              />
+            </label>
+
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Answer body
+              </span>
+              <AutoResizeTextarea
+                value={doc.swoonBody}
+                onChange={handleSwoonChange("swoonBody")}
+                rows={2}
+                className="mt-2 w-full resize-none rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+              />
+            </label>
+
+            <div className="space-y-3">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Glow words
+              </span>
+              <div className="grid grid-cols-2 gap-2">
+                {doc.swoonTags.map((tag, index) => (
+                  <input
+                    key={`swoon-tag-${index}`}
+                    value={tag}
+                    onChange={handleSwoonTagChange(index)}
+                    className="rounded-2xl border border-white/70 bg-white/80 px-3 py-2 text-xs text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+                  />
+                ))}
+              </div>
+            </div>
+          </EditorSection>
+
+          <EditorSection
+            title="Scene cards"
+            helper="Short cinematic beats for the montage."
+          >
+            <div className="space-y-3">
+              {doc.perkCards.map((card, index) => (
+                <div
+                  key={`perk-card-${index}`}
+                  className="space-y-2 rounded-2xl border border-white/70 bg-white/80 px-4 py-3 shadow-soft"
+                >
+                  <p className="text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-rose-400">
+                    Scene {index + 1}
+                  </p>
+                  <input
+                    value={card.title}
+                    onChange={handlePerkChange(index, "title")}
+                    className="w-full bg-transparent px-1 py-1 text-sm font-semibold text-slate-700 focus:outline-none"
+                  />
+                  <AutoResizeTextarea
+                    value={card.body}
+                    onChange={handlePerkChange(index, "body")}
+                    rows={2}
+                    className="w-full resize-none bg-transparent px-1 py-1 text-sm text-slate-700 focus:outline-none"
+                  />
+                </div>
+              ))}
+            </div>
+          </EditorSection>
+
+          <EditorSection
+            title="After hours plan"
+            helper="Edit the scene list and promises."
+          >
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Scene list title
+              </span>
+              <input
+                value={doc.datePlanTitle}
+                onChange={handleSimpleFieldChange("datePlanTitle")}
+                className="mt-2 w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+              />
+            </label>
+            <div className="space-y-3">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Scene list
+              </span>
+              {doc.datePlanSteps.map((step, index) => (
+                <div
+                  key={`plan-step-${index}`}
+                  className="space-y-2 rounded-2xl border border-white/70 bg-white/80 px-4 py-3 shadow-soft"
+                >
+                  <p className="text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-rose-400">
+                    Scene {index + 1}
+                  </p>
+                  <input
+                    value={step.title}
+                    onChange={handleDatePlanChange(index, "title")}
+                    className="w-full bg-transparent px-1 py-1 text-sm font-semibold text-slate-700 focus:outline-none"
+                  />
+                  <AutoResizeTextarea
+                    value={step.body}
+                    onChange={handleDatePlanChange(index, "body")}
+                    rows={2}
+                    className="w-full resize-none bg-transparent px-1 py-1 text-sm text-slate-700 focus:outline-none"
+                  />
+                </div>
+              ))}
+            </div>
+
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Promise title
+              </span>
+              <input
+                value={doc.promiseTitle}
+                onChange={handleSimpleFieldChange("promiseTitle")}
+                className="mt-2 w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+              />
+            </label>
+
+            <div className="space-y-3">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Promise lines
+              </span>
+              <div className="space-y-2">
+                {doc.promiseItems.map((item, index) => (
+                  <input
+                    key={`promise-${index}`}
+                    value={item}
+                    onChange={handlePromiseChange(index)}
+                    className="w-full rounded-2xl border border-white/70 bg-white/80 px-3 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+                  />
+                ))}
+              </div>
+            </div>
+          </EditorSection>
+        </>
+      ) : null}
+
+      {isSunlitPicnic ? (
+        <>
+          <EditorSection
+            title="Sunlit yes"
+            helper="Edit the answer seal and sunlight words."
+          >
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Answer label
+              </span>
+              <input
+                value={doc.swoonLabel}
+                onChange={handleSwoonChange("swoonLabel")}
+                className="mt-2 w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+              />
+            </label>
+
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Answer headline
+              </span>
+              <input
+                value={doc.swoonHeadline}
+                onChange={handleSwoonChange("swoonHeadline")}
+                className="mt-2 w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+              />
+            </label>
+
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Answer body
+              </span>
+              <AutoResizeTextarea
+                value={doc.swoonBody}
+                onChange={handleSwoonChange("swoonBody")}
+                rows={2}
+                className="mt-2 w-full resize-none rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+              />
+            </label>
+
+            <div className="space-y-3">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Sunlight words
+              </span>
+              <div className="grid grid-cols-2 gap-2">
+                {doc.swoonTags.map((tag, index) => (
+                  <input
+                    key={`swoon-tag-${index}`}
+                    value={tag}
+                    onChange={handleSwoonTagChange(index)}
+                    className="rounded-2xl border border-white/70 bg-white/80 px-3 py-2 text-xs text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+                  />
+                ))}
+              </div>
+            </div>
+          </EditorSection>
+
+          <EditorSection
+            title="Picnic basket"
+            helper="Little details for the spread."
+          >
+            <div className="space-y-3">
+              {doc.perkCards.map((card, index) => (
+                <div
+                  key={`perk-card-${index}`}
+                  className="space-y-2 rounded-2xl border border-white/70 bg-white/80 px-4 py-3 shadow-soft"
+                >
+                  <p className="text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-rose-400">
+                    Basket {index + 1}
+                  </p>
+                  <input
+                    value={card.title}
+                    onChange={handlePerkChange(index, "title")}
+                    className="w-full bg-transparent px-1 py-1 text-sm font-semibold text-slate-700 focus:outline-none"
+                  />
+                  <AutoResizeTextarea
+                    value={card.body}
+                    onChange={handlePerkChange(index, "body")}
+                    rows={2}
+                    className="w-full resize-none bg-transparent px-1 py-1 text-sm text-slate-700 focus:outline-none"
+                  />
+                </div>
+              ))}
+            </div>
+          </EditorSection>
+
+          <EditorSection
+            title="Picnic plan"
+            helper="Edit the plan for your day in the sun."
+          >
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Plan title
+              </span>
+              <input
+                value={doc.datePlanTitle}
+                onChange={handleSimpleFieldChange("datePlanTitle")}
+                className="mt-2 w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+              />
+            </label>
+            <div className="space-y-3">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Plan steps
+              </span>
+              {doc.datePlanSteps.map((step, index) => (
+                <div
+                  key={`plan-step-${index}`}
+                  className="space-y-2 rounded-2xl border border-white/70 bg-white/80 px-4 py-3 shadow-soft"
+                >
+                  <p className="text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-rose-400">
+                    Step {index + 1}
+                  </p>
+                  <input
+                    value={step.title}
+                    onChange={handleDatePlanChange(index, "title")}
+                    className="w-full bg-transparent px-1 py-1 text-sm font-semibold text-slate-700 focus:outline-none"
+                  />
+                  <AutoResizeTextarea
+                    value={step.body}
+                    onChange={handleDatePlanChange(index, "body")}
+                    rows={2}
+                    className="w-full resize-none bg-transparent px-1 py-1 text-sm text-slate-700 focus:outline-none"
+                  />
+                </div>
+              ))}
+            </div>
+          </EditorSection>
+
+          <EditorSection
+            title="Quotes and poems"
+            helper="Short lines to scatter across the page."
+          >
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Section title
+              </span>
+              <input
+                value={doc.promiseTitle}
+                onChange={handleSimpleFieldChange("promiseTitle")}
+                className="mt-2 w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+              />
+            </label>
+
+            <div className="space-y-3">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Lines
+              </span>
+              <div className="space-y-2">
+                {doc.promiseItems.map((item, index) => (
+                  <input
+                    key={`promise-${index}`}
+                    value={item}
+                    onChange={handlePromiseChange(index)}
+                    className="w-full rounded-2xl border border-white/70 bg-white/80 px-3 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+                  />
+                ))}
+              </div>
+            </div>
+          </EditorSection>
+        </>
+      ) : null}
+
+      {isGardenParty ? (
+        <>
+          <EditorSection
+            title="Garden RSVP"
+            helper="Edit the RSVP card and sparkle tags."
+          >
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                RSVP label
+              </span>
+              <input
+                value={doc.swoonLabel}
+                onChange={handleSwoonChange("swoonLabel")}
+                className="mt-2 w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+              />
+            </label>
+
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                RSVP headline
+              </span>
+              <input
+                value={doc.swoonHeadline}
+                onChange={handleSwoonChange("swoonHeadline")}
+                className="mt-2 w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+              />
+            </label>
+
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                RSVP body
+              </span>
+              <AutoResizeTextarea
+                value={doc.swoonBody}
+                onChange={handleSwoonChange("swoonBody")}
+                rows={2}
+                className="mt-2 w-full resize-none rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+              />
+            </label>
+
+            <div className="space-y-3">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Garden tags
+              </span>
+              <div className="grid grid-cols-2 gap-2">
+                {doc.swoonTags.map((tag, index) => (
+                  <input
+                    key={`swoon-tag-${index}`}
+                    value={tag}
+                    onChange={handleSwoonTagChange(index)}
+                    className="rounded-2xl border border-white/70 bg-white/80 px-3 py-2 text-xs text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+                  />
+                ))}
+              </div>
+            </div>
+          </EditorSection>
+
+          <EditorSection
+            title="Garden favors"
+            helper="Details for the table settings."
+          >
+            <div className="space-y-3">
+              {doc.perkCards.map((card, index) => (
+                <div
+                  key={`perk-card-${index}`}
+                  className="space-y-2 rounded-2xl border border-white/70 bg-white/80 px-4 py-3 shadow-soft"
+                >
+                  <p className="text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-rose-400">
+                    Favor {index + 1}
+                  </p>
+                  <input
+                    value={card.title}
+                    onChange={handlePerkChange(index, "title")}
+                    className="w-full bg-transparent px-1 py-1 text-sm font-semibold text-slate-700 focus:outline-none"
+                  />
+                  <AutoResizeTextarea
+                    value={card.body}
+                    onChange={handlePerkChange(index, "body")}
+                    rows={2}
+                    className="w-full resize-none bg-transparent px-1 py-1 text-sm text-slate-700 focus:outline-none"
+                  />
+                </div>
+              ))}
+            </div>
+          </EditorSection>
+
+          <EditorSection
+            title="Garden plan"
+            helper="Edit the itinerary for your party."
+          >
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Plan title
+              </span>
+              <input
+                value={doc.datePlanTitle}
+                onChange={handleSimpleFieldChange("datePlanTitle")}
+                className="mt-2 w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+              />
+            </label>
+            <div className="space-y-3">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Plan steps
+              </span>
+              {doc.datePlanSteps.map((step, index) => (
+                <div
+                  key={`plan-step-${index}`}
+                  className="space-y-2 rounded-2xl border border-white/70 bg-white/80 px-4 py-3 shadow-soft"
+                >
+                  <p className="text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-rose-400">
+                    Step {index + 1}
+                  </p>
+                  <input
+                    value={step.title}
+                    onChange={handleDatePlanChange(index, "title")}
+                    className="w-full bg-transparent px-1 py-1 text-sm font-semibold text-slate-700 focus:outline-none"
+                  />
+                  <AutoResizeTextarea
+                    value={step.body}
+                    onChange={handleDatePlanChange(index, "body")}
+                    rows={2}
+                    className="w-full resize-none bg-transparent px-1 py-1 text-sm text-slate-700 focus:outline-none"
+                  />
+                </div>
+              ))}
+            </div>
+          </EditorSection>
+
+          <EditorSection
+            title="Garden toasts"
+            helper="Short quotes and poems for the party."
+          >
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Section title
+              </span>
+              <input
+                value={doc.promiseTitle}
+                onChange={handleSimpleFieldChange("promiseTitle")}
+                className="mt-2 w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+              />
+            </label>
+
+            <div className="space-y-3">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Lines
+              </span>
+              <div className="space-y-2">
+                {doc.promiseItems.map((item, index) => (
+                  <input
+                    key={`promise-${index}`}
+                    value={item}
+                    onChange={handlePromiseChange(index)}
+                    className="w-full rounded-2xl border border-white/70 bg-white/80 px-3 py-2 text-sm text-slate-700 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+                  />
+                ))}
+              </div>
+            </div>
+          </EditorSection>
+        </>
+      ) : null}
+
+      <EditorSection title={momentsSectionTitle} helper={momentsSectionHelper}>
         <label className="block">
           <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
             Section title

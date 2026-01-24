@@ -47,6 +47,7 @@ export type BuilderDoc = {
   sectionOrder?: Array<"gallery" | "love-note" | "moments">;
   photoMood?: "soft" | "pink" | "vintage" | "natural";
   backgroundIntensity?: "soft" | "medium" | "bold";
+  midnightPalette?: "velvet" | "ember" | "moonlight";
 };
 
 export type BuilderTheme = {

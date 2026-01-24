@@ -12,6 +12,7 @@ import type {
 } from "@/lib/builder/types";
 
 const storageKey = (templateId: TemplateId) => `bmv:builder:${templateId}`;
+const MIDNIGHT_PALETTES = ["velvet", "ember", "moonlight"] as const;
 
 const coercePhotos = (value: unknown): BuilderPhoto[] => {
   if (!Array.isArray(value)) {
@@ -85,6 +86,11 @@ export const coerceBuilderDoc = (
           section === "moments"
       )
     : defaults.sectionOrder;
+  const midnightPalette =
+    typeof doc.midnightPalette === "string" &&
+    MIDNIGHT_PALETTES.includes(doc.midnightPalette as (typeof MIDNIGHT_PALETTES)[number])
+      ? (doc.midnightPalette as BuilderDoc["midnightPalette"])
+      : defaults.midnightPalette;
 
   const photos = coercePhotos(doc.photos);
 
@@ -166,6 +172,7 @@ export const coerceBuilderDoc = (
     sectionOrder: sectionOrder && sectionOrder.length === 3 ? sectionOrder : defaults.sectionOrder,
     photoMood: doc.photoMood ?? defaults.photoMood,
     backgroundIntensity: doc.backgroundIntensity ?? defaults.backgroundIntensity,
+    midnightPalette,
   };
 };
 

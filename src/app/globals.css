@@ -244,3 +244,432 @@ summary::-webkit-details-marker {
 .no-glow {
   animation: no-glow 2.8s ease-out infinite;
 }
+
+@keyframes muse-drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(12px, -10px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.muse-drift {
+  animation: muse-drift 14s ease-in-out infinite;
+}
+
+@keyframes muse-sheen {
+  0% {
+    opacity: 0;
+    transform: translateX(-120%);
+  }
+  30% {
+    opacity: 0.4;
+  }
+  60% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(120%);
+  }
+}
+
+.muse-sheen {
+  animation: muse-sheen 7.5s ease-in-out infinite;
+}
+
+@keyframes muse-glint {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+.muse-glint {
+  animation: muse-glint 4s ease-in-out infinite;
+}
+
+@keyframes muse-pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 var(--muse-accent-soft);
+  }
+  60% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 18px rgba(0, 0, 0, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+.muse-pulse {
+  animation: muse-pulse 0.65s ease-out;
+}
+
+@keyframes muse-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.muse-rise {
+  animation: muse-rise 0.75s ease-out both;
+}
+
+.muse-scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(15, 23, 42, 0.18),
+    rgba(15, 23, 42, 0.18) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+  mix-blend-mode: soft-light;
+}
+
+@keyframes muse-spotlight {
+  0% {
+    transform: translate3d(-6%, -4%, 0) scale(1);
+    opacity: 0.75;
+  }
+  50% {
+    transform: translate3d(5%, 6%, 0) scale(1.08);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate3d(-6%, -4%, 0) scale(1);
+    opacity: 0.75;
+  }
+}
+
+.muse-spotlight {
+  animation: muse-spotlight 16s ease-in-out infinite;
+}
+
+@keyframes muse-record {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 var(--muse-accent-soft);
+  }
+  60% {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 18px rgba(0, 0, 0, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+.muse-record {
+  animation: muse-record 0.7s ease-out;
+}
+
+.muse-perforation {
+  background-color: rgba(15, 23, 42, 0.9);
+  background-image: radial-gradient(
+    circle at 8px 8px,
+    transparent 6px,
+    rgba(15, 23, 42, 0.9) 6px
+  );
+  background-size: 16px 16px;
+  background-repeat: repeat-x;
+}
+
+@keyframes muse-spark {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+.muse-spark {
+  animation: muse-spark 3.2s ease-in-out infinite;
+}
+
+.sunlit-gingham {
+  background-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.5) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.5) 1px,
+      transparent 1px
+    );
+  background-size: 42px 42px;
+  mix-blend-mode: soft-light;
+}
+
+@keyframes sunlit-float {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(10px, -12px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.sunlit-float {
+  animation: sunlit-float 12s ease-in-out infinite;
+}
+
+@keyframes sunlit-pop {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 var(--sunlit-glow);
+  }
+  60% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 18px rgba(0, 0, 0, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+.sunlit-pop {
+  animation: sunlit-pop 0.7s ease-out;
+}
+
+@keyframes sunlit-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sunlit-rise {
+  animation: sunlit-rise 0.7s ease-out both;
+}
+
+.sunlit-route {
+  background-image: repeating-linear-gradient(
+    to right,
+    rgba(251, 191, 36, 0.6) 0,
+    rgba(251, 191, 36, 0.6) 12px,
+    transparent 12px,
+    transparent 22px
+  );
+}
+
+.sunlit-route-vertical {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(251, 191, 36, 0.6) 0,
+    rgba(251, 191, 36, 0.6) 12px,
+    transparent 12px,
+    transparent 22px
+  );
+}
+
+@keyframes sunlit-spark {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+.sunlit-spark {
+  animation: sunlit-spark 3.6s ease-in-out infinite;
+}
+
+.sunlit-page {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(251, 191, 36, 0.18) 0,
+    rgba(251, 191, 36, 0.18) 1px,
+    transparent 1px,
+    transparent 28px
+  );
+}
+
+.garden-lattice {
+  background-image: linear-gradient(
+      90deg,
+      rgba(16, 185, 129, 0.08) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      0deg,
+      rgba(16, 185, 129, 0.08) 1px,
+      transparent 1px
+    );
+  background-size: 56px 56px;
+  mix-blend-mode: soft-light;
+}
+
+@keyframes garden-float {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(12px, -10px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.garden-float {
+  animation: garden-float 14s ease-in-out infinite;
+}
+
+@keyframes garden-breeze {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(6px, -6px, 0) rotate(3deg);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+}
+
+.garden-breeze {
+  animation: garden-breeze 10s ease-in-out infinite;
+}
+
+@keyframes garden-bloom {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 var(--garden-glow);
+  }
+  60% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 18px rgba(0, 0, 0, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+.garden-bloom {
+  animation: garden-bloom 0.7s ease-out;
+}
+
+@keyframes garden-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.garden-rise {
+  animation: garden-rise 0.7s ease-out both;
+}
+
+@keyframes garden-glimmer {
+  0% {
+    opacity: 0;
+    transform: translateX(-120%);
+  }
+  40% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(120%);
+  }
+}
+
+.garden-glimmer {
+  animation: garden-glimmer 8s ease-in-out infinite;
+}
+
+.garden-garland {
+  background-image: repeating-linear-gradient(
+    to right,
+    rgba(16, 185, 129, 0.6) 0,
+    rgba(16, 185, 129, 0.6) 12px,
+    transparent 12px,
+    transparent 24px
+  );
+}
+
+.garden-vine {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(16, 185, 129, 0.6) 0,
+    rgba(16, 185, 129, 0.6) 12px,
+    transparent 12px,
+    transparent 24px
+  );
+}
+
+@keyframes garden-spark {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+.garden-spark {
+  animation: garden-spark 3.6s ease-in-out infinite;
+}
+
+.garden-pin {
+  border-radius: 999px;
+  background: radial-gradient(
+    circle,
+    rgba(251, 113, 133, 0.8),
+    rgba(251, 113, 133, 0.2)
+  );
+  box-shadow: 0 6px 14px -10px rgba(15, 23, 42, 0.6);
+}
+
+.garden-paper {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(16, 185, 129, 0.15) 0,
+    rgba(16, 185, 129, 0.15) 1px,
+    transparent 1px,
+    transparent 28px
+  );
+}

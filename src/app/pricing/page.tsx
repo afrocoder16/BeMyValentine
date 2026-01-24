@@ -5,7 +5,7 @@ const tiers = [
   {
     name: "Normal",
     price: "$9.99",
-    features: ["Up to 6 photos", "Cute Classic + Midnight Muse", "1 share link"],
+    features: ["Up to 6 photos", "All templates", "1 share link"],
     cta: "Start building",
     href: "/templates",
     highlight: false,
