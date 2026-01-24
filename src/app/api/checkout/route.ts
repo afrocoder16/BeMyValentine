@@ -116,7 +116,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+  const origin = request.headers.get("origin");
+  const siteUrl = origin ?? process.env.NEXT_PUBLIC_SITE_URL ?? "";
   const priceNormal = process.env.STRIPE_PRICE_NORMAL ?? "";
   const pricePro = process.env.STRIPE_PRICE_PRO ?? "";
 
