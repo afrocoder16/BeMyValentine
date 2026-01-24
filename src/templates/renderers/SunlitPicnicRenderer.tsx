@@ -242,14 +242,14 @@ export default function SunlitPicnicRenderer({
         transition: { duration: 0.6, ease: "easeOut" },
       };
 
-  const paletteStyle: CSSProperties = {
+  const paletteStyle = {
     "--picnic-cream": "#FFF7E6",
     "--picnic-butter": "#F9E27D",
     "--picnic-tangerine": "#F7A35B",
     "--picnic-sky": "#A8D8F0",
     "--picnic-sage": "#B9C8A3",
     "--picnic-ink": "#2E2A24",
-  };
+  } as CSSProperties;
 
   const showTagline = doc.tagline.trim().length > 0;
   const showSubtitle = doc.showSubtitle !== false && doc.subtitle.trim().length > 0;

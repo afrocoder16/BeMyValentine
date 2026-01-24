@@ -9,11 +9,13 @@ import { validateDocShape } from "@/lib/publish/validation";
 
 export const runtime = "nodejs";
 
-const stripeSecret = process.env.STRIPE_SECRET_KEY;
-if (!stripeSecret) {
-  throw new Error("Missing STRIPE_SECRET_KEY");
-}
-const stripe = new Stripe(stripeSecret);
+const getStripe = () => {
+  const stripeSecret = process.env.STRIPE_SECRET_KEY;
+  if (!stripeSecret) {
+    return null;
+  }
+  return new Stripe(stripeSecret);
+};
 
 type CheckoutRequestBody = {
   plan?: unknown;
@@ -28,6 +30,13 @@ const isValidPlan = (value: unknown): value is PlanId =>
   value === "normal" || value === "pro";
 
 export async function POST(request: Request) {
+  const stripe = getStripe();
+  if (!stripe) {
+    return NextResponse.json(
+      { error: "missing_env", message: "Missing STRIPE_SECRET_KEY." },
+      { status: 500 }
+    );
+  }
   const url = new URL(request.url);
   let payload: CheckoutRequestBody | null = null;
   try {

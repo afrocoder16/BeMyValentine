@@ -8,11 +8,13 @@ import { getSupabaseServiceClient } from "@/lib/supabase/service";
 
 export const runtime = "nodejs";
 
-const stripeSecret = process.env.STRIPE_SECRET_KEY;
-if (!stripeSecret) {
-  throw new Error("Missing STRIPE_SECRET_KEY");
-}
-const stripe = new Stripe(stripeSecret);
+const getStripe = () => {
+  const stripeSecret = process.env.STRIPE_SECRET_KEY;
+  if (!stripeSecret) {
+    return null;
+  }
+  return new Stripe(stripeSecret);
+};
 const isDev = process.env.NODE_ENV !== "production";
 
 const maskSessionId = (value: string) => {
@@ -40,6 +42,13 @@ const isValidTemplateId = (value: unknown): value is TemplateId =>
   typeof value === "string" && TEMPLATE_IDS.includes(value as TemplateId);
 
 export async function POST(request: Request) {
+  const stripe = getStripe();
+  if (!stripe) {
+    return NextResponse.json(
+      { verified: false, error: "missing_env" },
+      { status: 500 }
+    );
+  }
   let payload: ConfirmPaymentBody | null = null;
   try {
     payload = (await request.json()) as ConfirmPaymentBody;

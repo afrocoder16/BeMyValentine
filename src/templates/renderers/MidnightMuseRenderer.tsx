@@ -138,7 +138,7 @@ export default function MidnightMuseRenderer({
   const paletteKey = doc.midnightPalette as MidnightPalette | undefined;
   const palette =
     (paletteKey && MIDNIGHT_PALETTES[paletteKey]) ?? MIDNIGHT_PALETTES.velvet;
-  const paletteStyle: CSSProperties = {
+  const paletteStyle = {
     "--muse-accent": palette.accent,
     "--muse-accent-strong": palette.accentStrong,
     "--muse-accent-soft": palette.accentSoft,
@@ -146,7 +146,7 @@ export default function MidnightMuseRenderer({
     "--muse-shimmer": palette.shimmer,
     "--muse-ink": "#e2e8f0",
     "--muse-bg": "#0b0a14",
-  };
+  } as CSSProperties;
 
   const showTagline = doc.tagline.trim().length > 0;
   const showSubtitle = doc.showSubtitle !== false && doc.subtitle.trim().length > 0;

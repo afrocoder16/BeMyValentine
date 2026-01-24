@@ -162,14 +162,14 @@ export default function GardenPartyRenderer({
     doc.sectionOrder && doc.sectionOrder.length === 3
       ? doc.sectionOrder
       : ["gallery", "love-note", "moments"];
-  const paletteStyle: CSSProperties = {
+  const paletteStyle = {
     "--garden-accent": GARDEN_PALETTE.accent,
     "--garden-accent-strong": GARDEN_PALETTE.accentStrong,
     "--garden-blush": GARDEN_PALETTE.blush,
     "--garden-sun": GARDEN_PALETTE.sun,
     "--garden-cream": GARDEN_PALETTE.cream,
     "--garden-glow": GARDEN_PALETTE.glow,
-  };
+  } as CSSProperties;
   const [isYesAnimating, setIsYesAnimating] = useState(false);
 
   const triggerYesAnimation = () => {

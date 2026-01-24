@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Bebas_Neue, IBM_Plex_Mono, Inter } from "next/font/google";
 import {
   type CSSProperties,
+  type ReactElement,
   useEffect,
   useRef,
   useState,
@@ -346,7 +347,7 @@ export default function RetroLoveRenderer({
     </motion.section>
   );
 
-  const sectionRenderers: Record<string, () => JSX.Element> = {
+  const sectionRenderers: Record<string, () => ReactElement> = {
     gallery: renderGallery,
     "love-note": renderLoveNotes,
     moments: renderMoments,
