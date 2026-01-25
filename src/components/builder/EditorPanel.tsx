@@ -451,9 +451,11 @@ export default function EditorPanel({
     updateDoc((prev) => {
       const nextPhotos = [...photos];
       if (targetIndex !== null && targetIndex < nextPhotos.length) {
+        const existing = nextPhotos[targetIndex];
         nextPhotos[targetIndex] = {
           ...createUploadedPhoto(dataUrl, targetIndex),
-          alt: nextPhotos[targetIndex].alt,
+          alt: existing.alt,
+          caption: existing.caption ?? "",
         };
       } else {
         nextPhotos.push(createUploadedPhoto(dataUrl, nextPhotos.length));
@@ -525,6 +527,16 @@ export default function EditorPanel({
       return { ...prev, photos: reindexed };
     });
   };
+
+  const handlePhotoCaptionChange =
+    (index: number) => (event: ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      updateDoc((prev) => {
+        const nextPhotos = [...photos];
+        nextPhotos[index] = { ...nextPhotos[index], caption: value };
+        return { ...prev, photos: nextPhotos };
+      });
+    };
 
   const handleUploadMusic = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -1772,6 +1784,12 @@ export default function EditorPanel({
                   <Trash2 className="h-4 w-4" />
                 </button>
               </div>
+              <input
+                value={photo.caption ?? ""}
+                onChange={handlePhotoCaptionChange(index)}
+                placeholder="Caption (optional)"
+                className="w-full rounded-2xl border border-white/70 bg-white/80 px-3 py-2 text-xs text-slate-600 shadow-soft focus:border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-200/60"
+              />
             </div>
           ))}
         </div>

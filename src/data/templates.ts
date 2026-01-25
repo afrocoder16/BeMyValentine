@@ -39,10 +39,6 @@ const templates: Template[] = [
         "/demos/cute-classic/2.jpg",
         "/demos/cute-classic/3.jpg",
       ],
-      music: {
-        title: "Soft Piano",
-        src: "/demos/audio/soft-piano.mp3",
-      },
     },
     theme: {
       gradient: "from-rose-200 via-pink-100 to-amber-100",

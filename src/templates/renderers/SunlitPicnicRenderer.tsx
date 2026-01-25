@@ -83,6 +83,13 @@ export default function SunlitPicnicRenderer({
         order: index,
       }));
   const moments = doc.moments.filter((moment) => moment.trim().length > 0);
+  const photoCaptions = photos.map((photo, index) => {
+    const caption = photo.caption?.trim();
+    if (caption) {
+      return caption;
+    }
+    return moments[index] ?? `Moment ${index + 1}`;
+  });
   const loveNotes =
     doc.loveNotes && doc.loveNotes.length > 0
       ? doc.loveNotes.filter((note) => note.trim().length > 0)
@@ -392,7 +399,7 @@ export default function SunlitPicnicRenderer({
                             )}
                           </div>
                           <p className="mt-3 text-xs uppercase tracking-[0.3em] text-[color:var(--picnic-ink)]/70">
-                            {moments[index] ?? `Moment ${index + 1}`}
+                            {photoCaptions[index]}
                           </p>
                         </div>
                       ))}

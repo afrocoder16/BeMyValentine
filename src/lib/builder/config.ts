@@ -217,7 +217,7 @@ const themePresets: Record<TemplateId, Omit<BuilderTheme, "gradient" | "tagline"
     accent: "text-rose-500",
     maxPhotos: DEFAULT_MAX_PHOTOS,
     photoUpsellPrice: DEFAULT_UPSELL_PRICE,
-    defaultFont: "playful",
+    defaultFont: "soft",
   },
   "midnight-muse": {
     card: "bg-slate-900/70",
@@ -285,6 +285,7 @@ export const getDefaultLoveNoteTitle = (
 const createPhoto = (src: string, order: number): BuilderPhoto => ({
   id: `photo-${order}-${Math.random().toString(36).slice(2, 8)}`,
   src,
+  caption: "",
   order,
 });
 

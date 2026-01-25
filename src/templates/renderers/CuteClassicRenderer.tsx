@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type MouseEvent as ReactMouseEvent,
+} from "react";
 import type { TemplateRendererProps } from "@/lib/builder/types";
 import {
   resolveBackgroundOverlayClass,
@@ -12,6 +18,169 @@ import {
 type PreviewAudioControlProps = {
   title: string;
   src: string;
+};
+
+type HeartTrail = {
+  id: number;
+  x: number;
+  y: number;
+};
+
+const rootStyle = {
+  "--cc-base": "#fbf6ef",
+  "--cc-blush": "#f3c6cf",
+  "--cc-gold": "#d6b27c",
+  "--cc-ink": "#1f2933",
+  "--cc-sage": "#b7c7b0",
+} as CSSProperties;
+
+const couponKinds = ["snack", "hug", "playlist", "kiss"] as const;
+
+const CouponIcon = ({ type }: { type: (typeof couponKinds)[number] }) => {
+  switch (type) {
+    case "snack":
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M5 8h14l-1 10H6L5 8Z"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+          />
+          <path
+            d="M8 6h8"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+        </svg>
+      );
+    case "hug":
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M8 9c0-2 1.8-3 4-3s4 1 4 3-1.8 3-4 3-4-1-4-3Z"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+          />
+          <path
+            d="M4 18c2-4 6-5 8-5s6 1 8 5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+        </svg>
+      );
+    case "playlist":
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M6 7h8M6 11h8M6 15h5"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+          <circle
+            cx="18"
+            cy="15"
+            r="2.5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+          />
+        </svg>
+      );
+    case "kiss":
+    default:
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M7 12c0-2 2-3 5-3s5 1 5 3-2 3-5 3-5-1-5-3Z"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+          />
+          <path
+            d="M9 12h6"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+        </svg>
+      );
+  }
+};
+
+const menuIcons = ["wine", "candle", "moon", "dessert"] as const;
+
+const MenuIcon = ({ type }: { type: (typeof menuIcons)[number] }) => {
+  switch (type) {
+    case "wine":
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M8 4h8v4a4 4 0 0 1-8 0V4Z"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+          />
+          <path
+            d="M12 12v6m-3 2h6"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+        </svg>
+      );
+    case "candle":
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M12 4c1 1 2 2 2 3a2 2 0 0 1-4 0c0-1 1-2 2-3Z"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+          />
+          <path
+            d="M9 10h6v8H9v-8Z"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+          />
+        </svg>
+      );
+    case "moon":
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M15 4a7 7 0 1 0 5 12 7.5 7.5 0 0 1-5-12Z"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+          />
+        </svg>
+      );
+    case "dessert":
+    default:
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M6 10h12l-2 8H8l-2-8Z"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+          />
+          <path
+            d="M9 6h6"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+        </svg>
+      );
+  }
 };
 
 function PreviewAudioControl({ title, src }: PreviewAudioControlProps) {
@@ -70,12 +239,12 @@ function PreviewAudioControl({ title, src }: PreviewAudioControlProps) {
   };
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-3 rounded-full bg-white/90 px-4 py-2 shadow-[0_18px_40px_-24px_rgba(14,165,233,0.45)] ring-1 ring-white/70 backdrop-blur">
+    <div className="flex flex-wrap items-center justify-center gap-3 rounded-full bg-white/90 px-4 py-2 text-[color:var(--cc-ink)] shadow-[0_18px_40px_-28px_rgba(83,64,51,0.35)] ring-1 ring-[color:rgba(214,178,124,0.4)] backdrop-blur">
       <button
         type="button"
         onClick={handleToggle}
         aria-pressed={isPlaying}
-        className="rounded-full bg-sky-500 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white shadow-[0_12px_30px_-18px_rgba(14,165,233,0.7)] ring-1 ring-white/80 transition hover:-translate-y-0.5 hover:bg-sky-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+        className="rounded-full bg-[color:var(--cc-blush)] px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-[color:var(--cc-ink)] shadow-[0_12px_26px_-18px_rgba(214,178,124,0.7)] ring-1 ring-white/80 transition hover:-translate-y-0.5 hover:bg-[color:var(--cc-gold)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cc-gold)]"
       >
         {isPlaying ? "Pause" : "Play"}
       </button>
@@ -134,78 +303,218 @@ export default function CuteClassicRenderer({
     doc.sectionOrder && doc.sectionOrder.length === 3
       ? doc.sectionOrder
       : ["gallery", "love-note", "moments"];
-  const captionMoments = moments.slice(0, photos.length);
-  const [isYesAnimating, setIsYesAnimating] = useState(false);
+  const captionFallbacks = moments.slice(0, photos.length);
+  const photoCaptions = photos.map((photo, index) => {
+    const caption = photo.caption?.trim();
+    if (caption) {
+      return caption;
+    }
+    return captionFallbacks[index] ?? "";
+  });
   const perkCards = doc.perkCards.filter(
     (perk) => perk.title.trim().length > 0 || perk.body.trim().length > 0
   );
   const sparkleWords = doc.swoonTags.filter((tag) => tag.trim().length > 0);
+  const tempLabels = sparkleWords.length
+    ? sparkleWords
+    : ["sweet", "warm", "glowing", "obsessed"];
   const datePlanSteps = doc.datePlanSteps.filter(
     (step) => step.title.trim().length > 0 || step.body.trim().length > 0
   );
   const promiseItems = doc.promiseItems.filter(
     (item) => item.trim().length > 0
   );
+  const menuFallbacks = ["Starters", "Main", "Dessert", "Sweet finish"];
+  const polaroidTilts = [-2, 1.5, -1.2, 2, -1.6, 1.2];
+  const loveTempLabel =
+    /swoon/i.test(doc.swoonLabel) || doc.swoonLabel.trim().length === 0
+      ? "Love temperature"
+      : doc.swoonLabel;
+  const loveTempHeadline =
+    /crush/i.test(doc.swoonHeadline) || doc.swoonHeadline.trim().length === 0
+      ? "Love level: glowing"
+      : doc.swoonHeadline;
+  const loveTempBody =
+    doc.swoonBody.trim().length > 0
+      ? doc.swoonBody
+      : "Soft, steady, and sweet in all the right places.";
+  const dateMenuTitle =
+    /plan/i.test(doc.datePlanTitle) || doc.datePlanTitle.trim().length === 0
+      ? "Tonight's menu"
+      : doc.datePlanTitle;
+  const promiseTitle =
+    /tiny promises/i.test(doc.promiseTitle) || doc.promiseTitle.trim().length === 0
+      ? "Promise notes"
+      : doc.promiseTitle;
+  const loveNotePreview = doc.loveNote.trim();
+  const envelopePreview =
+    loveNotePreview.length > 0
+      ? loveNotePreview.length > 100
+        ? `${loveNotePreview.slice(0, 100)}...`
+        : loveNotePreview
+      : "A letter tucked inside, waiting for your yes.";
+  const [isEnvelopeOpen, setIsEnvelopeOpen] = useState(false);
+  const [tempActive, setTempActive] = useState(false);
+  const [heartTrails, setHeartTrails] = useState<HeartTrail[]>([]);
+  const [reduceMotion, setReduceMotion] = useState(false);
+  const lastHeartTime = useRef(0);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const tempRef = useRef<HTMLDivElement | null>(null);
 
-  const triggerYesAnimation = () => {
-    setIsYesAnimating(false);
-    requestAnimationFrame(() => setIsYesAnimating(true));
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const handleChange = () => setReduceMotion(media.matches);
+    handleChange();
+    if (media.addEventListener) {
+      media.addEventListener("change", handleChange);
+    } else {
+      media.addListener(handleChange);
+    }
+    return () => {
+      if (media.removeEventListener) {
+        media.removeEventListener("change", handleChange);
+      } else {
+        media.removeListener(handleChange);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    const target = tempRef.current;
+    if (!target) {
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTempActive(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.45 }
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, []);
+
+  const handleMouseMove = (event: ReactMouseEvent<HTMLDivElement>) => {
+    if (isPhone || reduceMotion) {
+      return;
+    }
+    if (typeof window !== "undefined") {
+      const pointerFine = window.matchMedia("(pointer: fine)");
+      if (!pointerFine.matches) {
+        return;
+      }
+    }
+    const container = containerRef.current;
+    if (!container) {
+      return;
+    }
+    const now = Date.now();
+    if (now - lastHeartTime.current < 800) {
+      return;
+    }
+    const rect = container.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
+      return;
+    }
+    const id = now;
+    lastHeartTime.current = now;
+    setHeartTrails((prev) => [...prev, { id, x, y }]);
+    window.setTimeout(() => {
+      setHeartTrails((prev) => prev.filter((heart) => heart.id !== id));
+    }, 1400);
   };
 
   return (
     <div
-      className={`preview-body ${fontStyleClass} relative w-full overflow-hidden ${containerRadius} ${containerHeight} bg-gradient-to-br ${theme.gradient} ${containerShadow}`}
-      style={{ fontFamily: "var(--preview-body)" }}
+      ref={containerRef}
+      onMouseMove={handleMouseMove}
+      className={`preview-body ${fontStyleClass} cc-stationery relative w-full overflow-hidden ${containerRadius} ${containerHeight} ${containerShadow}`}
+      style={{ fontFamily: "var(--preview-body)", ...rootStyle }}
     >
-      <div className="pointer-events-none absolute inset-0 opacity-40">
-        <div
-          className="h-full w-full"
-          style={{
-            backgroundImage: "url('/textures/noise.png')",
-            backgroundRepeat: "repeat",
-          }}
-        />
+      <div className="pointer-events-none absolute inset-0">
+        <div className="cc-paper-grain absolute inset-0" />
+        <div className={`absolute inset-0 ${backgroundOverlayClass}`} />
+        <div className="cc-stitch absolute inset-6 rounded-[2.25rem]" />
+        <div className="cc-ink-lines absolute inset-8 rounded-[2rem]" />
+        <div className="cc-flower cc-flower-top-left" aria-hidden="true">
+          <svg viewBox="0 0 120 120" fill="none">
+            <path
+              d="M20 92C32 70 50 58 76 52C90 50 100 44 108 34"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+            />
+            <path
+              d="M34 94C38 76 48 64 64 56C78 50 92 42 98 30"
+              stroke="currentColor"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+            />
+            <path
+              d="M32 68C30 60 34 54 40 52C46 50 52 54 54 60C56 66 52 72 46 74C40 76 34 72 32 68Z"
+              stroke="currentColor"
+              strokeWidth="1.2"
+            />
+            <path
+              d="M72 46C70 40 74 34 80 32C86 30 92 34 94 40C96 46 92 52 86 54C80 56 74 52 72 46Z"
+              stroke="currentColor"
+              strokeWidth="1.2"
+            />
+          </svg>
+        </div>
+        <div className="cc-flower cc-flower-bottom-right" aria-hidden="true">
+          <svg viewBox="0 0 120 120" fill="none">
+            <path
+              d="M100 28C88 50 70 62 44 68C30 70 20 76 12 86"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+            />
+            <path
+              d="M86 26C82 44 72 56 56 64C42 70 28 78 22 90"
+              stroke="currentColor"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+            />
+            <path
+              d="M88 52C90 60 86 66 80 68C74 70 68 66 66 60C64 54 68 48 74 46C80 44 86 48 88 52Z"
+              stroke="currentColor"
+              strokeWidth="1.2"
+            />
+            <path
+              d="M48 74C50 80 46 86 40 88C34 90 28 86 26 80C24 74 28 68 34 66C40 64 46 68 48 74Z"
+              stroke="currentColor"
+              strokeWidth="1.2"
+            />
+          </svg>
+        </div>
+        <span className="cc-emboss cc-emboss-top" aria-hidden="true" />
+        <span className="cc-emboss cc-emboss-bottom" aria-hidden="true" />
       </div>
-      <div className={`absolute inset-0 ${backgroundOverlayClass}`} />
-      <span
-        aria-hidden="true"
-        className="floaty absolute left-8 top-10 h-16 w-16 rounded-full bg-white/70 blur-[1px]"
-        style={{ animationDuration: "10s" }}
-      />
-      <span
-        aria-hidden="true"
-        className="floaty absolute right-10 top-24 h-12 w-12 rounded-full bg-rose-200/70"
-        style={{ animationDuration: "7s", animationDelay: "-2s" }}
-      />
-      <span
-        aria-hidden="true"
-        className="floaty absolute left-6 bottom-24 h-10 w-10 rounded-full bg-amber-200/70"
-        style={{ animationDuration: "9s", animationDelay: "-4s" }}
-      />
-      <span
-        aria-hidden="true"
-        className="floaty absolute right-6 bottom-10 h-14 w-14 rounded-full bg-sky-200/70"
-        style={{ animationDuration: "11s", animationDelay: "-1s" }}
-      />
-      <span
-        aria-hidden="true"
-        className="twinkle absolute left-1/2 top-12 h-2 w-2 -translate-x-1/2 rounded-full bg-white/90"
-      />
-      <span
-        aria-hidden="true"
-        className="twinkle absolute left-16 top-44 h-3 w-3 rotate-45 rounded-[4px] bg-rose-200/90"
-        style={{ animationDelay: "-1.5s" }}
-      />
-      <span
-        aria-hidden="true"
-        className="twinkle absolute right-20 top-52 h-2.5 w-2.5 rotate-45 rounded-[4px] bg-amber-200/90"
-        style={{ animationDelay: "-0.8s" }}
-      />
-      <span
-        aria-hidden="true"
-        className="twinkle absolute left-24 bottom-32 h-2 w-2 rounded-full bg-rose-100/90"
-        style={{ animationDelay: "-2.2s" }}
-      />
+      <div className="pointer-events-none absolute inset-0">
+        {heartTrails.map((heart) => (
+          <span
+            key={heart.id}
+            className="cc-heart-trail"
+            style={{ left: heart.x, top: heart.y }}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 20s-6-4.6-8.4-7.3C1.2 10.2 2 6.7 5.2 5.6c2.1-.8 4.1.2 5.2 1.8 1.1-1.6 3.1-2.6 5.2-1.8 3.2 1.1 4 4.6 1.6 7.1C18 15.4 12 20 12 20Z" />
+            </svg>
+          </span>
+        ))}
+      </div>
 
       {isPublished ? null : (
         <div className="absolute right-6 top-6 z-10 rounded-full bg-white/80 px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-rose-500">
@@ -218,9 +527,10 @@ export default function CuteClassicRenderer({
           isPhone ? "h-full overflow-y-auto" : ""
         }`}
       >
-        <header className="text-center text-slate-900">
+        <header className="text-center text-[color:var(--cc-ink)]">
           {showTagline ? (
-            <div className="mx-auto inline-flex items-center gap-3 rounded-full bg-white/80 px-5 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-rose-500 shadow-soft">
+            <div className="mx-auto inline-flex items-center gap-3 rounded-full border border-white/80 bg-white/80 px-5 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.35em] text-[color:var(--cc-ink)] shadow-soft">
+              <span className="h-2 w-2 rounded-full bg-[color:var(--cc-blush)]" />
               {doc.tagline}
             </div>
           ) : null}
@@ -239,72 +549,82 @@ export default function CuteClassicRenderer({
           ) : null}
         </header>
 
-        <section className="flex flex-col items-center gap-5 text-center">
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <button
-              type="button"
-              onClick={triggerYesAnimation}
-              onAnimationEnd={() => setIsYesAnimating(false)}
-              className={`rounded-[2.5rem] bg-emerald-400 px-8 py-6 text-4xl font-bold uppercase tracking-[0.2em] text-white shadow-[0_25px_50px_-30px_rgba(16,185,129,0.8)] transition hover:bg-emerald-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200 ${
-                isYesAnimating ? "yes-pop" : ""
-              }`}
-            >
-              Yes
-            </button>
-            <div className="rounded-full bg-rose-500 px-5 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white shadow-soft">
-              What about a cute date?
+        <div className="cc-ribbon my-2" aria-hidden="true">
+          <span />
+          <span className="cc-ribbon-bow" />
+          <span />
+        </div>
+
+        <section className="flex flex-col items-center gap-4 text-center">
+          <p className="text-[0.6rem] font-semibold uppercase tracking-[0.4em] text-[color:var(--cc-gold)]">
+            Envelope reveal
+          </p>
+          <button
+            type="button"
+            onClick={() => setIsEnvelopeOpen((prev) => !prev)}
+            aria-pressed={isEnvelopeOpen}
+            className="cc-envelope-button"
+          >
+            <span className="sr-only">Open envelope</span>
+            <div className={`cc-envelope ${isEnvelopeOpen ? "is-open" : ""}`}>
+              <div className="cc-envelope-body" />
+              <div className="cc-envelope-flap" />
+              <div className="cc-envelope-seal">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 20s-6-4.6-8.4-7.3C1.2 10.2 2 6.7 5.2 5.6c2.1-.8 4.1.2 5.2 1.8 1.1-1.6 3.1-2.6 5.2-1.8 3.2 1.1 4 4.6 1.6 7.1C18 15.4 12 20 12 20Z" />
+                </svg>
+              </div>
+              <div className="cc-envelope-card">
+                <span className="text-[0.55rem] font-semibold uppercase tracking-[0.35em] text-[color:var(--cc-gold)]">
+                  The answer
+                </span>
+                <span className="preview-heading text-3xl text-[color:var(--cc-ink)]">
+                  YES
+                </span>
+                <span className="cc-envelope-preview text-xs text-slate-600">
+                  {envelopePreview}
+                </span>
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col items-center gap-2 text-center">
-            <div className="no-dodge">
-              <button
-                type="button"
-                className="no-glow rounded-full border border-rose-200 bg-white/90 px-6 py-3 text-xs font-semibold uppercase tracking-[0.32em] text-rose-600 shadow-soft transition hover:bg-rose-50/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-200"
-              >
-                No
-              </button>
-            </div>
-            <span className="text-[0.65rem] uppercase tracking-[0.3em] text-rose-500">
-              Not a real option
+          </button>
+          <div className="flex flex-wrap items-center justify-center gap-2 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-slate-500">
+            <span className="rounded-full border border-white/80 bg-white/90 px-3 py-2">
+              Open me
+            </span>
+            <span className="rounded-full border border-white/80 bg-white/90 px-3 py-2 text-[color:var(--cc-gold)]">
+              Wax seal
             </span>
           </div>
         </section>
 
-        <section className="grid gap-6 lg:grid-cols-[1.05fr_1fr]">
-          <div className="relative overflow-hidden rounded-[2.5rem] bg-white/90 p-6 text-left shadow-soft transition duration-300 hover:-translate-y-1">
-            <span
-              aria-hidden="true"
-              className="twinkle absolute right-10 top-10 h-2.5 w-2.5 rounded-full bg-rose-200/80"
-            />
-            <span
-              aria-hidden="true"
-              className="twinkle absolute -right-4 bottom-6 h-12 w-12 rounded-full bg-amber-100/80 blur-[1px]"
-              style={{ animationDelay: "-1.2s" }}
-            />
-            {doc.swoonLabel.trim().length > 0 ? (
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-400">
-                {doc.swoonLabel}
-              </p>
-            ) : null}
-            {doc.swoonHeadline.trim().length > 0 ? (
-              <h3 className="preview-heading mt-3 text-2xl text-slate-900 md:text-3xl">
-                {doc.swoonHeadline}
-              </h3>
-            ) : null}
-            {doc.swoonBody.trim().length > 0 ? (
-              <p className="mt-2 text-sm text-slate-600">
-                {doc.swoonBody}
-              </p>
-            ) : null}
-            <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-rose-100">
-              <div className="swoon-meter h-full w-[88%] rounded-full bg-gradient-to-r from-rose-400 via-amber-300 to-rose-400" />
+        <section className="grid items-start gap-6 lg:grid-cols-[1.05fr_1fr]">
+          <div
+            ref={tempRef}
+            className="relative overflow-hidden rounded-[2.5rem] border border-white/80 bg-white/90 p-6 text-left shadow-soft"
+          >
+            <span className="cc-heart-pin" aria-hidden="true" />
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--cc-gold)]">
+              {loveTempLabel}
+            </p>
+            <h3 className="preview-heading mt-3 text-2xl text-[color:var(--cc-ink)] md:text-3xl">
+              {loveTempHeadline}
+            </h3>
+            <p className="mt-2 text-sm text-slate-600">{loveTempBody}</p>
+            <div className="cc-thermo mt-5">
+              <div
+                className={`cc-thermo-fill ${
+                  tempActive && !reduceMotion ? "is-active" : ""
+                }`}
+              >
+                <span className="cc-thermo-spark" aria-hidden="true" />
+              </div>
             </div>
-            {sparkleWords.length > 0 ? (
-              <div className="mt-4 flex flex-wrap gap-2 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-rose-500">
-                {sparkleWords.map((word, index) => (
+            {tempLabels.length > 0 ? (
+              <div className="mt-4 flex flex-wrap gap-2 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-[color:var(--cc-ink)]">
+                {tempLabels.map((word, index) => (
                   <span
                     key={`${word}-${index}`}
-                    className="rounded-full bg-rose-50/80 px-3 py-1 shadow-soft"
+                    className="rounded-full border border-white/80 bg-white/90 px-3 py-1"
                   >
                     {word}
                   </span>
@@ -312,75 +632,73 @@ export default function CuteClassicRenderer({
               </div>
             ) : null}
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {perkCards.map((perk, index) => (
-              <div
-                key={`${perk.title}-${index}`}
-                className={`relative overflow-hidden rounded-[2rem] border border-rose-100 bg-white/85 p-4 shadow-soft transition duration-300 hover:-translate-y-1 ${
-                  index % 2 === 0 ? "sticker-wiggle" : ""
-                }`}
-              >
-                <span
-                  aria-hidden="true"
-                  className="twinkle absolute right-4 top-4 h-2 w-2 rounded-full bg-rose-300/80"
-                />
-                <span
-                  aria-hidden="true"
-                  className="glow-sweep absolute -left-1/2 top-0 h-full w-1/2 bg-gradient-to-r from-transparent via-rose-200/50 to-transparent"
-                />
-                {perk.title.trim().length > 0 ? (
-                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-500">
-                    {perk.title}
-                  </p>
-                ) : null}
-                {perk.body.trim().length > 0 ? (
-                  <p className="mt-2 text-sm text-slate-600">{perk.body}</p>
-                ) : null}
-              </div>
-            ))}
+          <div className="space-y-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--cc-gold)]">
+              Valentine coupons
+            </p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {perkCards.map((perk, index) => {
+                const icon =
+                  couponKinds[index % couponKinds.length] ?? "snack";
+                return (
+                  <div key={`${perk.title}-${index}`} className="cc-coupon">
+                    <span className="cc-coupon-stamp" aria-hidden="true">
+                      Redeem
+                    </span>
+                    <div className="cc-coupon-icon">
+                      <CouponIcon type={icon} />
+                    </div>
+                    {perk.title.trim().length > 0 ? (
+                      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--cc-ink)]">
+                        {perk.title}
+                      </p>
+                    ) : null}
+                    {perk.body.trim().length > 0 ? (
+                      <p className="mt-2 text-sm text-slate-600">
+                        {perk.body}
+                      </p>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </section>
 
+        <div className="cc-ribbon my-2" aria-hidden="true">
+          <span />
+          <span className="cc-ribbon-bow" />
+          <span />
+        </div>
+
         <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="relative overflow-hidden rounded-[2.5rem] border border-white/70 bg-white/90 p-6 shadow-soft transition duration-300 hover:-translate-y-1">
-            <span
-              aria-hidden="true"
-              className="glow-sweep absolute -left-1/2 top-0 h-full w-1/2 bg-gradient-to-r from-transparent via-rose-200/60 to-transparent"
-            />
-            <span
-              aria-hidden="true"
-              className="twinkle absolute right-6 top-6 h-2.5 w-2.5 rounded-full bg-rose-200/80"
-            />
-            {doc.datePlanTitle.trim().length > 0 ? (
-              <h3 className="preview-heading text-2xl text-slate-900 md:text-3xl">
-                {doc.datePlanTitle}
-              </h3>
-            ) : null}
+          <div className="relative overflow-hidden rounded-[2.5rem] border border-white/70 bg-white/90 p-6 shadow-soft">
+            <span className="cc-heart-pin" aria-hidden="true" />
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--cc-gold)]">
+              Date menu
+            </p>
+            <h3 className="preview-heading mt-2 text-2xl text-[color:var(--cc-ink)] md:text-3xl">
+              {dateMenuTitle}
+            </h3>
             {datePlanSteps.length > 0 ? (
-              <div className="mt-5 space-y-4">
-                {datePlanSteps.map((step, index) => (
-                  <div
-                    key={`${step.title}-${index}`}
-                    className={`relative rounded-[1.75rem] border border-rose-100 bg-white/85 p-4 shadow-soft transition duration-300 hover:-translate-y-1 ${
-                      index % 2 === 0 ? "ticket-float" : ""
-                    }`}
-                  >
-                    <span
-                      aria-hidden="true"
-                      className="absolute -left-2 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-rose-100"
-                    />
-                    <span
-                      aria-hidden="true"
-                      className="absolute -right-2 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-rose-100"
-                    />
-                    <div className="flex items-start gap-3">
-                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-500 text-xs font-semibold text-white shadow-soft">
-                        {index + 1}
-                      </span>
+              <div className="mt-5 space-y-3">
+                {datePlanSteps.map((step, index) => {
+                  const menuLabel =
+                    step.title.trim().length > 0 &&
+                    !/plan/i.test(step.title)
+                      ? step.title
+                      : menuFallbacks[index] ?? step.title;
+                  const icon =
+                    menuIcons[index % menuIcons.length] ?? "wine";
+                  return (
+                    <div key={`${step.title}-${index}`} className="cc-menu-item">
+                      <div className="cc-menu-icon">
+                        <MenuIcon type={icon} />
+                      </div>
                       <div>
-                        {step.title.trim().length > 0 ? (
-                          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-500">
-                            {step.title}
+                        {menuLabel ? (
+                          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--cc-ink)]">
+                            {menuLabel}
                           </p>
                         ) : null}
                         {step.body.trim().length > 0 ? (
@@ -390,33 +708,30 @@ export default function CuteClassicRenderer({
                         ) : null}
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ) : null}
           </div>
 
           <div className="relative overflow-hidden rounded-[2.5rem] border border-white/70 bg-white/90 p-6 shadow-soft transition duration-300 hover:-translate-y-1">
-            <span
-              aria-hidden="true"
-              className="glow-sweep absolute -left-1/2 top-0 h-full w-1/2 bg-gradient-to-r from-transparent via-amber-200/60 to-transparent"
-            />
-            <span
-              aria-hidden="true"
-              className="twinkle absolute right-6 top-6 h-2.5 w-2.5 rounded-full bg-amber-200/80"
-            />
-            {doc.promiseTitle.trim().length > 0 ? (
-              <h3 className="preview-heading text-2xl text-slate-900 md:text-3xl">
-                {doc.promiseTitle}
-              </h3>
-            ) : null}
+            <span className="cc-heart-pin" aria-hidden="true" />
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--cc-gold)]">
+              Vows, but cute
+            </p>
+            <h3 className="preview-heading mt-2 text-2xl text-[color:var(--cc-ink)] md:text-3xl">
+              {promiseTitle}
+            </h3>
             {promiseItems.length > 0 ? (
-              <ul className="mt-5 space-y-3 text-sm text-slate-600">
+              <ul className="mt-5 grid gap-3 text-sm text-slate-700">
                 {promiseItems.map((item, index) => (
                   <li
                     key={`${item}-${index}`}
-                    className="rounded-[1.75rem] bg-rose-50/80 px-4 py-3 shadow-soft transition duration-300 hover:-translate-y-0.5"
+                    className="cc-note"
+                    style={{ animationDelay: `${index * 0.12}s` }}
                   >
+                    <span className="cc-note-pin" aria-hidden="true" />
+                    <span className="cc-note-heart" aria-hidden="true" />
                     {item}
                   </li>
                 ))}
@@ -425,47 +740,67 @@ export default function CuteClassicRenderer({
           </div>
         </section>
 
+        <div className="cc-ribbon my-2" aria-hidden="true">
+          <span />
+          <span className="cc-ribbon-bow" />
+          <span />
+        </div>
+
         {orderedSections.map((section) => {
           if (section === "gallery") {
             return (
-              <section key="gallery" className="space-y-5">
+              <section key="gallery" className="relative space-y-5">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h2 className="preview-heading text-2xl text-slate-900 md:text-3xl">
-                    The chaos gallery
+                  <h2 className="preview-heading text-2xl text-[color:var(--cc-ink)] md:text-3xl">
+                    Polaroids on a string
                   </h2>
-                  <span className="rounded-full bg-white/80 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-rose-500">
-                    GIFs welcome
+                  <span className="rounded-full border border-white/80 bg-white/90 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-[color:var(--cc-gold)]">
+                    Sweet memories
                   </span>
                 </div>
+                <div className="cc-string" aria-hidden="true" />
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {photos.map((photo, index) => (
-                    <div key={`${photo.id}-${index}`} className="space-y-3">
+                  {photos.map((photo, index) => {
+                    const tilt = polaroidTilts[index % polaroidTilts.length];
+                    return (
                       <div
-                        className="relative overflow-hidden rounded-[2.5rem] bg-white/85 shadow-[0_24px_60px_-40px_rgba(248,113,113,0.8)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_30px_70px_-40px_rgba(248,113,113,0.85)]"
-                        style={{ aspectRatio: "4 / 5" }}
+                        key={`${photo.id}-${index}`}
+                        className="cc-polaroid"
+                        style={
+                          {
+                            "--tilt": `${tilt}deg`,
+                            animationDelay: `${index * 0.08}s`,
+                          } as CSSProperties
+                        }
                       >
-                        {photo.src ? (
-                          <img
-                            src={photo.src}
-                            alt={photo.alt ?? `Photo ${index + 1}`}
-                            className="h-full w-full object-cover"
-                            style={photoFilterStyle}
-                            loading="lazy"
-                          />
-                        ) : (
-                          <div
-                            className={`h-full w-full bg-gradient-to-br ${theme.gradient}`}
-                            style={photoFilterStyle}
-                          />
-                        )}
-                      </div>
-                      {captionMoments[index] ? (
-                        <div className="rounded-2xl bg-white/80 px-4 py-3 text-sm text-slate-700 shadow-soft transition duration-300 hover:-translate-y-0.5">
-                          {captionMoments[index]}
+                        <span className="cc-clip" aria-hidden="true" />
+                        <div className="cc-polaroid-photo">
+                          {photo.src ? (
+                            <img
+                              src={photo.src}
+                              alt={photo.alt ?? `Photo ${index + 1}`}
+                              className="h-full w-full object-cover"
+                              style={photoFilterStyle}
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div
+                              className={`h-full w-full bg-gradient-to-br ${theme.gradient}`}
+                              style={photoFilterStyle}
+                            />
+                          )}
                         </div>
-                      ) : null}
-                    </div>
-                  ))}
+                        {photoCaptions[index] ? (
+                          <div
+                            className="mt-3 text-sm text-slate-600"
+                            style={{ fontFamily: "var(--font-great-vibes)" }}
+                          >
+                            {photoCaptions[index]}
+                          </div>
+                        ) : null}
+                      </div>
+                    );
+                  })}
                 </div>
               </section>
             );
@@ -482,7 +817,7 @@ export default function CuteClassicRenderer({
                     return (
                       <div
                         key={`love-note-${index}`}
-                        className="rounded-[2.5rem] border-2 border-dashed border-rose-200 bg-white/90 p-8 text-center shadow-[0_25px_60px_-40px_rgba(244,114,182,0.6)] transition duration-300 hover:-translate-y-1"
+                        className="cc-letter text-center"
                       >
                         <h2 className="preview-heading text-2xl text-slate-900 md:text-3xl">
                           {title}
@@ -494,7 +829,7 @@ export default function CuteClassicRenderer({
                     );
                   })
                 ) : (
-                  <div className="rounded-[2.5rem] border-2 border-dashed border-rose-200 bg-white/90 p-8 text-center shadow-soft transition duration-300 hover:-translate-y-1">
+                  <div className="cc-letter text-center">
                     <h2 className="preview-heading text-2xl text-slate-900 md:text-3xl">
                       Love note
                     </h2>
@@ -510,16 +845,16 @@ export default function CuteClassicRenderer({
           return (
             <section
               key="moments"
-              className="rounded-[2.5rem] bg-white/85 p-8 shadow-soft"
+              className="rounded-[2.5rem] border border-white/80 bg-white/90 p-8 shadow-soft"
             >
-              <h2 className="preview-heading text-center text-2xl text-slate-900 md:text-3xl">
+              <h2 className="preview-heading text-center text-2xl text-[color:var(--cc-ink)] md:text-3xl">
                 {doc.momentsTitle}
               </h2>
               <ul className="mt-5 grid gap-3 text-sm text-slate-700 md:text-base">
                 {moments.map((moment, index) => (
                   <li
                     key={`${moment}-${index}`}
-                    className="rounded-2xl bg-rose-50/80 px-4 py-3 shadow-soft transition duration-300 hover:-translate-y-0.5"
+                    className="cc-moment"
                   >
                     {moment}
                   </li>
