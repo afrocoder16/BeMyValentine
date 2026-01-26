@@ -288,14 +288,19 @@ summary::-webkit-details-marker {
   position: absolute;
   width: 140px;
   height: 140px;
-  color: rgba(83, 64, 51, 0.25);
-  opacity: 0.4;
+  color: rgba(214, 178, 124, 0.35);
+  opacity: 0.6;
   filter: blur(0.2px);
 }
 
 .cc-flower svg {
   width: 100%;
   height: 100%;
+}
+
+.cc-flower-rose {
+  color: rgba(244, 114, 122, 0.55);
+  opacity: 0.7;
 }
 
 .cc-flower-top-left {
@@ -308,6 +313,79 @@ summary::-webkit-details-marker {
   right: 18px;
   bottom: 18px;
   transform: rotate(6deg);
+}
+
+.cc-ribbon-corner {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  color: rgba(244, 114, 122, 0.6);
+  opacity: 0.75;
+}
+
+.cc-ribbon-corner svg {
+  width: 100%;
+  height: 100%;
+}
+
+.cc-ribbon-corner-top-left {
+  left: 6px;
+  top: 6px;
+}
+
+.cc-ribbon-corner-bottom-right {
+  right: 6px;
+  bottom: 6px;
+  transform: rotate(180deg);
+}
+
+.cc-corner-heart {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  color: rgba(244, 114, 122, 0.55);
+  opacity: 0.8;
+}
+
+.cc-corner-heart svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+.cc-corner-heart-top-right {
+  top: 26px;
+  right: 32px;
+}
+
+.cc-corner-heart-bottom-left {
+  bottom: 28px;
+  left: 34px;
+}
+
+.cc-leaf {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  color: rgba(183, 199, 176, 0.55);
+  opacity: 0.55;
+}
+
+.cc-leaf svg {
+  width: 100%;
+  height: 100%;
+}
+
+.cc-leaf-top-right {
+  top: 40px;
+  right: 70px;
+  transform: rotate(12deg);
+}
+
+.cc-leaf-bottom-left {
+  bottom: 40px;
+  left: 60px;
+  transform: rotate(-12deg);
 }
 
 .cc-emboss {
@@ -350,6 +428,38 @@ summary::-webkit-details-marker {
   bottom: 20%;
 }
 
+.cc-petal {
+  position: absolute;
+  width: 20px;
+  height: 28px;
+  border-radius: 50% 50% 50% 50%;
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(244, 114, 122, 0.4),
+    rgba(244, 114, 122, 0.08)
+  );
+  filter: blur(0.2px);
+  opacity: 0.6;
+  transform: rotate(-12deg);
+}
+
+.cc-petal-one {
+  top: 20%;
+  left: 12%;
+}
+
+.cc-petal-two {
+  bottom: 22%;
+  right: 14%;
+  transform: rotate(18deg);
+}
+
+.cc-petal-three {
+  top: 38%;
+  right: 28%;
+  transform: rotate(-6deg);
+}
+
 .cc-heart-trail {
   position: absolute;
   width: 14px;
@@ -381,6 +491,9 @@ summary::-webkit-details-marker {
   border: 0;
   padding: 0;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cc-envelope-button:focus-visible {
@@ -391,8 +504,8 @@ summary::-webkit-details-marker {
 
 .cc-envelope {
   position: relative;
-  width: 240px;
-  height: 165px;
+  width: 310px;
+  height: 214px;
   transform-style: preserve-3d;
 }
 
@@ -410,7 +523,7 @@ summary::-webkit-details-marker {
   top: 0;
   left: 0;
   width: 100%;
-  height: 55%;
+  height: 66%;
   border-radius: 1.8rem 1.8rem 0 0;
   background: rgba(248, 240, 232, 0.95);
   border: 1px solid rgba(214, 178, 124, 0.35);
@@ -433,8 +546,9 @@ summary::-webkit-details-marker {
   flex-direction: column;
   gap: 0.3rem;
   box-shadow: 0 18px 35px -26px rgba(83, 64, 51, 0.4);
-  transform: translateY(18px);
-  transition: transform 0.6s ease;
+  transform: translateY(46px);
+  opacity: 0;
+  transition: transform 0.6s ease, opacity 0.35s ease;
   text-align: center;
   overflow: hidden;
 }
@@ -476,12 +590,104 @@ summary::-webkit-details-marker {
 }
 
 .cc-envelope.is-open .cc-envelope-card {
-  transform: translateY(-16px);
+  transform: translateY(-22px);
+  opacity: 1;
 }
 
 .cc-envelope.is-open .cc-envelope-seal {
   opacity: 0;
   transform: translateX(-50%) scale(0.75);
+}
+
+.cc-envelope-controls {
+  position: relative;
+  z-index: 2;
+}
+
+.cc-envelope-pill {
+  border-radius: 999px;
+  border: 1px solid rgba(214, 178, 124, 0.35);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.5rem 1rem;
+  color: rgba(83, 64, 51, 0.85);
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-size: 0.6rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cc-envelope-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -16px rgba(83, 64, 51, 0.4);
+}
+
+.cc-envelope-pill--accent {
+  color: rgba(244, 114, 122, 0.9);
+  border-color: rgba(244, 114, 122, 0.35);
+  background: rgba(255, 245, 245, 0.9);
+}
+
+.cc-envelope-halo {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  width: 320px;
+  height: 220px;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: radial-gradient(
+    circle,
+    rgba(244, 114, 122, 0.2),
+    transparent 70%
+  );
+  filter: blur(6px);
+  opacity: 0.8;
+}
+
+.cc-envelope-rose,
+.cc-envelope-leaf {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  opacity: 0.8;
+}
+
+.cc-envelope-rose svg,
+.cc-envelope-leaf svg {
+  width: 100%;
+  height: 100%;
+}
+
+.cc-envelope-rose {
+  color: rgba(244, 114, 122, 0.6);
+}
+
+.cc-envelope-rose-left {
+  left: 4%;
+  top: 48%;
+  transform: translateY(-50%) rotate(-8deg);
+}
+
+.cc-envelope-rose-right {
+  right: 4%;
+  top: 48%;
+  transform: translateY(-50%) rotate(8deg);
+}
+
+.cc-envelope-leaf {
+  color: rgba(183, 199, 176, 0.6);
+}
+
+.cc-envelope-leaf-left {
+  left: 14%;
+  top: 60%;
+  transform: translateY(-50%) rotate(-18deg);
+}
+
+.cc-envelope-leaf-right {
+  right: 14%;
+  top: 60%;
+  transform: translateY(-50%) rotate(18deg);
 }
 
 .cc-ribbon {
@@ -545,10 +751,11 @@ summary::-webkit-details-marker {
   width: 0%;
   border-radius: 999px;
   background: linear-gradient(90deg, #f3c6cf, #f4b184, #f3c6cf);
+  background-size: 200% 200%;
 }
 
 .cc-thermo-fill.is-active {
-  animation: cc-thermo-rise 2.4s ease forwards;
+  animation: cc-thermo-rise 2.4s ease forwards, cc-thermo-flow 4s ease-in-out infinite;
 }
 
 @keyframes cc-thermo-rise {
@@ -557,6 +764,62 @@ summary::-webkit-details-marker {
   }
   100% {
     width: 88%;
+  }
+}
+
+@keyframes cc-thermo-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.cc-thermo-fill::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 40%;
+  height: 120%;
+  transform: translateY(-50%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.7),
+    transparent
+  );
+  opacity: 0;
+}
+
+.cc-thermo-fill.is-active::after {
+  animation: cc-thermo-glow 2.6s ease-in-out infinite;
+  opacity: 1;
+}
+
+@keyframes cc-thermo-glow {
+  0% {
+    transform: translate(-20%, -50%);
+  }
+  100% {
+    transform: translate(220%, -50%);
+  }
+}
+
+.cc-thermo-fill.is-active .cc-thermo-spark {
+  animation: cc-thermo-sparkle 2.2s ease-in-out infinite;
+}
+
+@keyframes cc-thermo-sparkle {
+  0%,
+  100% {
+    transform: translateY(-50%) scale(0.9);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(-50%) scale(1.2);
+    opacity: 1;
   }
 }
 
@@ -873,8 +1136,8 @@ summary::-webkit-details-marker {
 
 @media (max-width: 640px) {
   .cc-envelope {
-    width: 200px;
-    height: 140px;
+    width: 240px;
+    height: 170px;
   }
   .cc-flower {
     width: 110px;
@@ -882,6 +1145,16 @@ summary::-webkit-details-marker {
   }
   .cc-string {
     top: 74px;
+  }
+  .cc-ribbon-corner,
+  .cc-corner-heart,
+  .cc-leaf {
+    display: none;
+  }
+  .cc-envelope-rose,
+  .cc-envelope-leaf,
+  .cc-envelope-halo {
+    display: none;
   }
 }
 
@@ -1919,6 +2192,8 @@ html {
   }
   .cc-heart-trail,
   .cc-thermo-fill,
+  .cc-thermo-fill::after,
+  .cc-thermo-spark,
   .cc-note,
   .cc-polaroid {
     animation: none;

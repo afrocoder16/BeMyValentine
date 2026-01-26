@@ -354,6 +354,10 @@ export default function CuteClassicRenderer({
         ? `${loveNotePreview.slice(0, 80)}...`
         : loveNotePreview
       : "A letter tucked inside, waiting for your yes.";
+  const previewMusic =
+    doc.music && doc.music.url !== "/demos/audio/soft-piano.mp3"
+      ? doc.music
+      : null;
   const [isEnvelopeOpen, setIsEnvelopeOpen] = useState(false);
   const [tempActive, setTempActive] = useState(false);
   const [heartTrails, setHeartTrails] = useState<HeartTrail[]>([]);
@@ -448,7 +452,7 @@ export default function CuteClassicRenderer({
         <div className={`absolute inset-0 ${backgroundOverlayClass}`} />
         <div className="cc-stitch absolute inset-6 rounded-[2.25rem]" />
         <div className="cc-ink-lines absolute inset-8 rounded-[2rem]" />
-        <div className="cc-flower cc-flower-top-left" aria-hidden="true">
+        <div className="cc-flower cc-flower-top-left cc-flower-rose" aria-hidden="true">
           <svg viewBox="0 0 120 120" fill="none">
             <path
               d="M20 92C32 70 50 58 76 52C90 50 100 44 108 34"
@@ -500,8 +504,85 @@ export default function CuteClassicRenderer({
             />
           </svg>
         </div>
+        <div className="cc-ribbon-corner cc-ribbon-corner-top-left" aria-hidden="true">
+          <svg viewBox="0 0 120 120" fill="none">
+            <path
+              d="M12 84C32 48 62 34 96 44"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+            />
+            <path
+              d="M16 96C40 64 70 54 108 66"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+        <div className="cc-ribbon-corner cc-ribbon-corner-bottom-right" aria-hidden="true">
+          <svg viewBox="0 0 120 120" fill="none">
+            <path
+              d="M12 84C32 48 62 34 96 44"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+            />
+            <path
+              d="M16 96C40 64 70 54 108 66"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+        <div className="cc-corner-heart cc-corner-heart-top-right" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 20s-6-4.6-8.4-7.3C1.2 10.2 2 6.7 5.2 5.6c2.1-.8 4.1.2 5.2 1.8 1.1-1.6 3.1-2.6 5.2-1.8 3.2 1.1 4 4.6 1.6 7.1C18 15.4 12 20 12 20Z" />
+          </svg>
+        </div>
+        <div className="cc-corner-heart cc-corner-heart-bottom-left" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 20s-6-4.6-8.4-7.3C1.2 10.2 2 6.7 5.2 5.6c2.1-.8 4.1.2 5.2 1.8 1.1-1.6 3.1-2.6 5.2-1.8 3.2 1.1 4 4.6 1.6 7.1C18 15.4 12 20 12 20Z" />
+          </svg>
+        </div>
+        <div className="cc-leaf cc-leaf-top-right" aria-hidden="true">
+          <svg viewBox="0 0 120 120" fill="none">
+            <path
+              d="M20 90C30 50 60 26 100 20C96 58 68 86 28 96"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+            />
+            <path
+              d="M36 76C52 62 68 50 88 40"
+              stroke="currentColor"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+        <div className="cc-leaf cc-leaf-bottom-left" aria-hidden="true">
+          <svg viewBox="0 0 120 120" fill="none">
+            <path
+              d="M20 90C30 50 60 26 100 20C96 58 68 86 28 96"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+            />
+            <path
+              d="M36 76C52 62 68 50 88 40"
+              stroke="currentColor"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
         <span className="cc-emboss cc-emboss-top" aria-hidden="true" />
         <span className="cc-emboss cc-emboss-bottom" aria-hidden="true" />
+        <span className="cc-petal cc-petal-one" aria-hidden="true" />
+        <span className="cc-petal cc-petal-two" aria-hidden="true" />
+        <span className="cc-petal cc-petal-three" aria-hidden="true" />
       </div>
       <div className="pointer-events-none absolute inset-0">
         {heartTrails.map((heart) => (
@@ -543,9 +624,12 @@ export default function CuteClassicRenderer({
               {doc.subtitle}
             </p>
           )}
-          {doc.music ? (
+          {previewMusic ? (
             <div className="mt-6 flex justify-center">
-              <PreviewAudioControl title={doc.music.name} src={doc.music.url} />
+              <PreviewAudioControl
+                title={previewMusic.name}
+                src={previewMusic.url}
+              />
             </div>
           ) : null}
         </header>
@@ -556,15 +640,89 @@ export default function CuteClassicRenderer({
           <span />
         </div>
 
-        <section className="flex flex-col items-center gap-4 text-center">
-          <p className="text-[0.6rem] font-semibold uppercase tracking-[0.4em] text-[color:var(--cc-gold)]">
+        <section className="relative flex flex-col items-center gap-4 text-center">
+          <div className="pointer-events-none absolute inset-0">
+            <span className="cc-envelope-halo" aria-hidden="true" />
+            <div className="cc-envelope-rose cc-envelope-rose-left" aria-hidden="true">
+              <svg viewBox="0 0 120 120" fill="none">
+                <path
+                  d="M60 24c-12 0-22 10-22 22 0 7 3 12 8 16-9 4-14 11-14 20 0 13 10 24 24 24 13 0 24-11 24-24 0-9-5-16-14-20 5-4 8-9 8-16 0-12-10-22-22-22Z"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                />
+                <path
+                  d="M60 36c-6 0-11 5-11 11s5 11 11 11 11-5 11-11-5-11-11-11Z"
+                  stroke="currentColor"
+                  strokeWidth="1.2"
+                />
+                <path
+                  d="M60 46c-3 0-6 3-6 6s3 6 6 6 6-3 6-6-3-6-6-6Z"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                />
+              </svg>
+            </div>
+            <div className="cc-envelope-rose cc-envelope-rose-right" aria-hidden="true">
+              <svg viewBox="0 0 120 120" fill="none">
+                <path
+                  d="M60 24c-12 0-22 10-22 22 0 7 3 12 8 16-9 4-14 11-14 20 0 13 10 24 24 24 13 0 24-11 24-24 0-9-5-16-14-20 5-4 8-9 8-16 0-12-10-22-22-22Z"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                />
+                <path
+                  d="M60 36c-6 0-11 5-11 11s5 11 11 11 11-5 11-11-5-11-11-11Z"
+                  stroke="currentColor"
+                  strokeWidth="1.2"
+                />
+                <path
+                  d="M60 46c-3 0-6 3-6 6s3 6 6 6 6-3 6-6-3-6-6-6Z"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                />
+              </svg>
+            </div>
+            <div className="cc-envelope-leaf cc-envelope-leaf-left" aria-hidden="true">
+              <svg viewBox="0 0 120 120" fill="none">
+                <path
+                  d="M18 92C28 52 56 28 96 20C92 60 64 88 24 98"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M34 78C50 64 66 50 86 40"
+                  stroke="currentColor"
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+            <div className="cc-envelope-leaf cc-envelope-leaf-right" aria-hidden="true">
+              <svg viewBox="0 0 120 120" fill="none">
+                <path
+                  d="M18 92C28 52 56 28 96 20C92 60 64 88 24 98"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M34 78C50 64 66 50 86 40"
+                  stroke="currentColor"
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+          </div>
+          <p className="relative z-10 text-[0.6rem] font-semibold uppercase tracking-[0.4em] text-[color:var(--cc-gold)]">
             Envelope reveal
           </p>
           <button
             type="button"
             onClick={() => setIsEnvelopeOpen((prev) => !prev)}
             aria-pressed={isEnvelopeOpen}
-            className="cc-envelope-button"
+            aria-expanded={isEnvelopeOpen}
+            className="relative z-10 cc-envelope-button"
           >
             <span className="sr-only">Open envelope</span>
             <div className={`cc-envelope ${isEnvelopeOpen ? "is-open" : ""}`}>
@@ -588,13 +746,21 @@ export default function CuteClassicRenderer({
               </div>
             </div>
           </button>
-          <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-slate-500">
-            <span className="rounded-full border border-white/80 bg-white/90 px-3 py-2">
+          <div className="cc-envelope-controls relative z-10 mt-2 flex flex-wrap items-center justify-center gap-2 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-slate-500">
+            <button
+              type="button"
+              onClick={() => setIsEnvelopeOpen(true)}
+              className="cc-envelope-pill"
+            >
               Open me
-            </span>
-            <span className="rounded-full border border-white/80 bg-white/90 px-3 py-2 text-[color:var(--cc-gold)]">
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsEnvelopeOpen(false)}
+              className="cc-envelope-pill cc-envelope-pill--accent"
+            >
               Wax seal
-            </span>
+            </button>
           </div>
         </section>
 

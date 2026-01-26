@@ -41,6 +41,13 @@ const coerceMusic = (value: unknown): BuilderMusic | null => {
   if (typeof music.url !== "string" || typeof music.name !== "string") {
     return null;
   }
+  const normalizedMusic = coerceMusic(doc.music) ?? defaults.music;
+  const sanitizedMusic =
+    templateId === "cute-classic" &&
+    normalizedMusic?.url === "/demos/audio/soft-piano.mp3"
+      ? null
+      : normalizedMusic;
+
   return {
     url: music.url,
     name: music.name,
@@ -160,7 +167,7 @@ export const coerceBuilderDoc = (
       photos.length > 0
         ? photos.slice(0, settings.maxPhotos)
         : defaults.photos.slice(0, settings.maxPhotos),
-    music: coerceMusic(doc.music) ?? defaults.music,
+    music: sanitizedMusic,
     selectedFont:
       typeof doc.selectedFont === "string"
         ? doc.selectedFont

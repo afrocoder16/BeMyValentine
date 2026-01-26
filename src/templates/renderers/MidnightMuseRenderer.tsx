@@ -147,6 +147,10 @@ export default function MidnightMuseRenderer({
     "--muse-shimmer": palette.shimmer,
     "--muse-ink": "#e2e8f0",
     "--muse-bg": "#0b0a14",
+    "--muse-rose": "rgba(248, 113, 113, 0.55)",
+    "--muse-heart": "rgba(251, 113, 133, 0.35)",
+    "--preview-display": "var(--font-dm-serif)",
+    "--preview-body": "var(--font-body)",
   } as CSSProperties;
 
   const showTagline = doc.tagline.trim().length > 0;
@@ -287,6 +291,46 @@ export default function MidnightMuseRenderer({
         <div className="absolute inset-0 muse-bokeh" />
         <div className="absolute inset-0 muse-grain" />
         <div className="absolute inset-0 muse-vignette" />
+        <div className="muse-rose muse-rose-top-left" aria-hidden="true">
+          <svg viewBox="0 0 120 120" fill="none">
+            <path
+              d="M60 24c-12 0-22 10-22 22 0 7 3 12 8 16-9 4-14 11-14 20 0 13 10 24 24 24 13 0 24-11 24-24 0-9-5-16-14-20 5-4 8-9 8-16 0-12-10-22-22-22Z"
+              stroke="currentColor"
+              strokeWidth="1.4"
+            />
+            <path
+              d="M60 36c-6 0-11 5-11 11s5 11 11 11 11-5 11-11-5-11-11-11Z"
+              stroke="currentColor"
+              strokeWidth="1.2"
+            />
+            <path
+              d="M60 46c-3 0-6 3-6 6s3 6 6 6 6-3 6-6-3-6-6-6Z"
+              stroke="currentColor"
+              strokeWidth="1"
+            />
+          </svg>
+        </div>
+        <div className="muse-rose muse-rose-bottom-right" aria-hidden="true">
+          <svg viewBox="0 0 120 120" fill="none">
+            <path
+              d="M60 24c-12 0-22 10-22 22 0 7 3 12 8 16-9 4-14 11-14 20 0 13 10 24 24 24 13 0 24-11 24-24 0-9-5-16-14-20 5-4 8-9 8-16 0-12-10-22-22-22Z"
+              stroke="currentColor"
+              strokeWidth="1.4"
+            />
+            <path
+              d="M60 36c-6 0-11 5-11 11s5 11 11 11 11-5 11-11-5-11-11-11Z"
+              stroke="currentColor"
+              strokeWidth="1.2"
+            />
+            <path
+              d="M60 46c-3 0-6 3-6 6s3 6 6 6 6-3 6-6-3-6-6-6Z"
+              stroke="currentColor"
+              strokeWidth="1"
+            />
+          </svg>
+        </div>
+        <span className="muse-heart muse-heart-top-right" aria-hidden="true" />
+        <span className="muse-heart muse-heart-bottom-left" aria-hidden="true" />
       </div>
       <div className={`absolute inset-0 ${backgroundOverlayClass}`} />
 
@@ -714,9 +758,10 @@ export default function MidnightMuseRenderer({
 
       <style jsx global>{`
         .muse-title {
-          letter-spacing: 0.25em;
-          text-transform: uppercase;
-          text-shadow: 0 0 20px rgba(148, 163, 184, 0.2);
+          font-family: var(--preview-display);
+          letter-spacing: 0.12em;
+          text-transform: none;
+          text-shadow: 0 0 18px rgba(148, 163, 184, 0.18);
         }
 
         .muse-haze {
@@ -763,6 +808,75 @@ export default function MidnightMuseRenderer({
 
         .muse-vignette {
           box-shadow: inset 0 0 140px rgba(0, 0, 0, 0.8);
+        }
+
+        .muse-rose {
+          position: absolute;
+          width: 160px;
+          height: 160px;
+          color: var(--muse-rose);
+          opacity: 0.55;
+          filter: blur(0.2px);
+          mix-blend-mode: screen;
+        }
+
+        .muse-rose svg {
+          width: 100%;
+          height: 100%;
+        }
+
+        .muse-rose-top-left {
+          top: 18px;
+          left: 18px;
+          transform: rotate(-6deg);
+        }
+
+        .muse-rose-bottom-right {
+          bottom: 18px;
+          right: 18px;
+          transform: rotate(8deg);
+        }
+
+        .muse-heart {
+          position: absolute;
+          width: 26px;
+          height: 26px;
+          transform: rotate(-45deg);
+          background: var(--muse-heart);
+          border-radius: 6px;
+          opacity: 0.45;
+          box-shadow: 0 0 18px rgba(248, 113, 113, 0.25);
+          mix-blend-mode: screen;
+        }
+
+        .muse-heart::before,
+        .muse-heart::after {
+          content: "";
+          position: absolute;
+          width: 26px;
+          height: 26px;
+          border-radius: 50%;
+          background: var(--muse-heart);
+        }
+
+        .muse-heart::before {
+          top: -13px;
+          left: 0;
+        }
+
+        .muse-heart::after {
+          left: 13px;
+          top: 0;
+        }
+
+        .muse-heart-top-right {
+          top: 70px;
+          right: 46px;
+        }
+
+        .muse-heart-bottom-left {
+          bottom: 70px;
+          left: 56px;
         }
 
         .muse-card-wrap {
@@ -824,7 +938,7 @@ export default function MidnightMuseRenderer({
         .muse-card-title {
           font-size: 2.5rem;
           font-weight: 600;
-          letter-spacing: 0.3em;
+          letter-spacing: 0.2em;
           text-transform: uppercase;
           color: #fff;
         }
@@ -879,6 +993,18 @@ export default function MidnightMuseRenderer({
           .muse-film-frame {
             min-width: 35%;
             height: 320px;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .muse-rose {
+            width: 110px;
+            height: 110px;
+            opacity: 0.45;
+          }
+
+          .muse-heart {
+            display: none;
           }
         }
 
