@@ -88,6 +88,7 @@ export default function MidnightMuseRenderer({
         id: `placeholder-${index + 1}`,
         src: "",
         alt: undefined,
+        caption: "",
         order: index,
       }));
   const moments = doc.moments.filter((moment) => moment.trim().length > 0);

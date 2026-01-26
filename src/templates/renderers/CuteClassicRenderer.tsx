@@ -263,11 +263,12 @@ export default function CuteClassicRenderer({
   context = "builder",
 }: TemplateRendererProps) {
   const photos = doc.photos.length
-    ? [...doc.photos].sort((a, b) => a.order - b.order)
-    : Array.from({ length: 3 }, (_, index) => ({
+      ? [...doc.photos].sort((a, b) => a.order - b.order)
+      : Array.from({ length: 3 }, (_, index) => ({
         id: `placeholder-${index + 1}`,
         src: "",
         alt: undefined,
+        caption: "",
         order: index,
       }));
   const moments = doc.moments.filter((moment) => moment.trim().length > 0);
@@ -349,8 +350,8 @@ export default function CuteClassicRenderer({
   const loveNotePreview = doc.loveNote.trim();
   const envelopePreview =
     loveNotePreview.length > 0
-      ? loveNotePreview.length > 100
-        ? `${loveNotePreview.slice(0, 100)}...`
+      ? loveNotePreview.length > 80
+        ? `${loveNotePreview.slice(0, 80)}...`
         : loveNotePreview
       : "A letter tucked inside, waiting for your yes.";
   const [isEnvelopeOpen, setIsEnvelopeOpen] = useState(false);
@@ -587,7 +588,7 @@ export default function CuteClassicRenderer({
               </div>
             </div>
           </button>
-          <div className="flex flex-wrap items-center justify-center gap-2 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-slate-500">
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-slate-500">
             <span className="rounded-full border border-white/80 bg-white/90 px-3 py-2">
               Open me
             </span>
@@ -600,7 +601,7 @@ export default function CuteClassicRenderer({
         <section className="grid items-start gap-6 lg:grid-cols-[1.05fr_1fr]">
           <div
             ref={tempRef}
-            className="relative overflow-hidden rounded-[2.5rem] border border-white/80 bg-white/90 p-6 text-left shadow-soft"
+            className="relative self-start overflow-hidden rounded-[2.5rem] border border-white/80 bg-white/90 p-6 text-left shadow-soft"
           >
             <span className="cc-heart-pin" aria-hidden="true" />
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--cc-gold)]">

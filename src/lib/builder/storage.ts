@@ -27,6 +27,7 @@ const coercePhotos = (value: unknown): BuilderPhoto[] => {
     )
     .map((photo, index) => ({
       ...photo,
+      caption: typeof photo.caption === "string" ? photo.caption : "",
       order: Number.isFinite(photo.order) ? photo.order : index,
     }))
     .sort((a, b) => a.order - b.order);

@@ -120,6 +120,7 @@ export default function RetroLoveRenderer({
         id: `placeholder-${index + 1}`,
         src: "",
         alt: undefined,
+        caption: "",
         order: index,
       }));
   const photoFilterStyle = resolvePhotoFilterStyle(doc.photoMood);
