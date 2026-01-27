@@ -23,7 +23,7 @@ import {
 } from "@/lib/builder/config";
 
 const MIN_MOMENTS = 3;
-const MAX_MOMENTS = 6;
+const MAX_MOMENTS = 10;
 const MAX_LOVE_NOTES = 4;
 const MAX_AUDIO_MB = 15;
 
@@ -230,6 +230,7 @@ export default function EditorPanel({
   const isSunlitPicnic = doc.templateId === "sunlit-picnic";
   const isGardenParty = doc.templateId === "garden-party";
   const isRetroLove = doc.templateId === "retro-love";
+  const isStarlit = doc.templateId === "starlit-constellations";
 
   const photos = [...doc.photos].sort((a, b) => a.order - b.order);
   const photoUsage = photos.length;
@@ -589,6 +590,8 @@ export default function EditorPanel({
         ? "Blooming moments"
         : isRetroLove
           ? "Replay list"
+          : isStarlit
+            ? "Constellation moments"
           : "Cute moments";
   const momentsSectionHelper = isMidnightMuse
     ? "Short lines that explain why the answer is yes."
@@ -598,6 +601,8 @@ export default function EditorPanel({
         ? "Moments that feel like petals in the air."
         : isRetroLove
           ? "Short captions for the replay list."
+          : isStarlit
+            ? "Constellation dots that trace your shared story."
           : "Short highlights you want them to remember.";
   const momentsOrderLabel = isMidnightMuse
     ? "Reasons"
@@ -607,6 +612,8 @@ export default function EditorPanel({
         ? "Blooming moments"
         : isRetroLove
           ? "Replay list"
+          : isStarlit
+            ? "Constellation moments"
           : "Cute moments";
   const midnightPaletteOptions = [
     {

@@ -1,50 +1,59 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { getTemplates } from "@/data/templates";
 import { buttonClasses } from "@/components/Button";
 import TemplateCard from "@/components/TemplateCard";
 import LoveNotes from "@/components/LoveNotes";
 
+const heroHighlights = [
+  "Guided star map that traces your story as constellations.",
+  "Tap the sky to ignite - new stars link to moments and orbit reasons.",
+  "Shooting stars reveal date ideas that you can pin as wish list sparks.",
+];
+
+const showcaseImages = [
+  "/showcase/1.png",
+  "/showcase/2.png",
+  "/showcase/3.png",
+  "/showcase/4.png",
+  "/showcase/5.png",
+];
+
 export default function Home() {
   const templates = getTemplates();
-  const primaryTemplate = templates[0];
+  const primaryTemplate =
+    templates.find((template) => template.id === "starlit-constellations") ??
+    templates[0];
+  const demoLine =
+    "A guided night sky experience that plays your words, photos, and music in a constellation map.";
+  const buildSteps = ["Pick", "Add media", "Write note", "Publish"];
+  const [showcaseIndex, setShowcaseIndex] = useState(0);
+  const showcaseImage = showcaseImages[showcaseIndex];
   const heroPreview = primaryTemplate
     ? {
         name: primaryTemplate.name,
-        image: primaryTemplate.demo.images[0] ?? "",
         gradient: primaryTemplate.theme.gradient,
+        image: showcaseImage,
       }
     : {
         name: "Cute Classic",
-        image: "",
         gradient: "from-rose-200 via-amber-100 to-pink-200",
+        image: showcaseImage,
       };
-  const demoLine = "For the nights that glow, this is for you.";
-  const buildSteps = ["Pick", "Add media", "Write note", "Publish"];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowcaseIndex((prev) => (prev + 1) % showcaseImages.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
   return (
-    <main className="mx-auto w-full max-w-6xl px-6 pb-24 pt-16 md:pt-24">
+    <main className="home-static mx-auto w-full max-w-6xl px-6 pb-24 pt-16 md:pt-24">
       <section className="relative grid items-center gap-10 overflow-hidden rounded-[3rem] border border-white/80 bg-white/70 p-6 shadow-[0_18px_50px_-40px_rgba(15,23,42,0.3)] md:p-10 lg:grid-cols-[1.05fr_0.95fr]">
         <div className="pointer-events-none absolute inset-0">
-          <div className="hero-pan absolute inset-0 opacity-70" />
-          <div className="hero-drift absolute -left-20 top-8 h-72 w-72 rounded-full bg-rose-200/70 blur-3xl" />
-          <div className="hero-drift absolute -right-20 top-[-4rem] h-80 w-80 rounded-full bg-amber-100/70 blur-3xl" />
-          <div className="hero-drift absolute bottom-[-6rem] left-1/3 h-80 w-80 rounded-full bg-pink-100/70 blur-3xl" />
-          <div className="hero-grain absolute inset-0 opacity-35" />
-          <div className="hero-sweep absolute inset-y-0 -left-1/3 w-2/3" />
-          <span
-            aria-hidden="true"
-            className="twinkle absolute left-12 top-16 h-2.5 w-2.5 rounded-full bg-white/80"
-          />
-          <span
-            aria-hidden="true"
-            className="twinkle absolute right-24 top-28 h-2.5 w-2.5 rotate-45 rounded-[4px] bg-rose-200/80"
-            style={{ animationDelay: "-1.2s" }}
-          />
-          <span
-            aria-hidden="true"
-            className="floaty absolute right-16 bottom-16 h-10 w-10 rounded-full bg-amber-100/80"
-            style={{ animationDuration: "9s" }}
-          />
           <div className="absolute inset-0 rounded-[3rem] border border-white/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]" />
         </div>
 
@@ -126,6 +135,16 @@ export default function Home() {
             <div className="hero-journey-line mt-4" aria-hidden="true">
               <span className="hero-journey-dot" />
             </div>
+          </div>
+          <div className="mt-6 grid gap-4 sm:grid-cols-3">
+            {heroHighlights.map((highlight) => (
+              <div
+                key={highlight}
+                className="mx-auto max-w-[14rem] rounded-2xl border border-white/80 bg-white/80 px-4 py-3 text-center text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-slate-600 shadow-soft"
+              >
+                <p className="leading-tight text-[0.5rem]">{highlight}</p>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -267,7 +286,7 @@ export default function Home() {
           </Link>
         </div>
         <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {templates.slice(0, 5).map((template) => (
+          {templates.map((template) => (
             <TemplateCard key={template.id} template={template} compact />
           ))}
         </div>

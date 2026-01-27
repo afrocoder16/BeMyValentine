@@ -2206,3 +2206,37 @@ html {
     transition: none;
   }
 }
+
+.home-static .hero-pan,
+.home-static .hero-drift,
+.home-static .hero-sweep,
+.home-static .hero-pulse,
+.home-static .hero-sticker,
+.home-static .hero-demo-photo,
+.home-static .hero-demo-photo-img,
+.home-static .hero-demo-note,
+.home-static .hero-demo-note-text,
+.home-static .hero-demo-cursor,
+.home-static .hero-demo-music,
+.home-static .hero-demo-eq span,
+.home-static .hero-demo-publish,
+.home-static .hero-demo-toast,
+.home-static .hero-journey-dot,
+.home-static .hero-demo-track-dot,
+.home-static .hero-sheen,
+.home-static .hero-scanlines,
+.home-static .hero-demo-track,
+.home-static .hero-demo-music,
+.home-static .hero-demo-toast,
+.home-static .hero-demo-note,
+.home-static .hero-demo-photo,
+.home-static .hero-demo-photo-img {
+  animation: none !important;
+  transition: none !important;
+}
+.home-static .hero-demo-note,
+.home-static .hero-demo-photo,
+.home-static .hero-demo-track-dot,
+.home-static .hero-demo-photo-img {
+  transform: none !important;
+}

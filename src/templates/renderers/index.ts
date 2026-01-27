@@ -5,6 +5,7 @@ import GardenPartyRenderer from "@/templates/renderers/GardenPartyRenderer";
 import MidnightMuseRenderer from "@/templates/renderers/MidnightMuseRenderer";
 import RetroLoveRenderer from "@/templates/renderers/RetroLoveRenderer";
 import SunlitPicnicRenderer from "@/templates/renderers/SunlitPicnicRenderer";
+import StarlitConstellationsRenderer from "@/templates/renderers/StarlitConstellationsRenderer";
 
 const renderers: Partial<Record<TemplateId, TemplateRenderer>> = {
   "cute-classic": CuteClassicRenderer,
@@ -12,6 +13,7 @@ const renderers: Partial<Record<TemplateId, TemplateRenderer>> = {
   "midnight-muse": MidnightMuseRenderer,
   "retro-love": RetroLoveRenderer,
   "sunlit-picnic": SunlitPicnicRenderer,
+  "starlit-constellations": StarlitConstellationsRenderer,
 };
 
 export const getTemplateRenderer = (templateId: TemplateId): TemplateRenderer =>

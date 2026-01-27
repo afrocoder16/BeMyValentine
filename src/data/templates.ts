@@ -4,6 +4,7 @@ export const TEMPLATE_IDS = [
   "sunlit-picnic",
   "garden-party",
   "retro-love",
+  "starlit-constellations",
 ] as const;
 
 export type TemplateId = (typeof TEMPLATE_IDS)[number];
@@ -110,6 +111,29 @@ const templates: Template[] = [
     },
     theme: {
       gradient: "from-amber-300 via-rose-300 to-fuchsia-300",
+    },
+  },
+  {
+    id: "starlit-constellations",
+    name: "Starlit Constellations",
+    vibeTagline: "Dreamy, intimate, magical.",
+    description:
+      "A guided night sky that traces your story into constellations, orbiting reasons, and wishful sparks.",
+    demo: {
+      caption:
+        "A velvety nebula, glowing stars, and tap-to-ignite moments that bloom as you scroll.",
+      images: [
+        "/demos/starlit-constellations/1.svg",
+        "/demos/starlit-constellations/2.svg",
+        "/demos/starlit-constellations/3.svg",
+      ],
+      music: {
+        title: "Vincent (Starry Starry Night)",
+        src: "/demos/audio/vincent-starry-night.mp3",
+      },
+    },
+    theme: {
+      gradient: "from-slate-900 via-indigo-950 to-purple-700",
     },
   },
 ];

@@ -190,6 +190,58 @@ const RETRO_PROMISE_ITEMS = [
   "SIDE A FOREVER",
   "REWIND FOR MORE",
 ];
+
+const STARLIT_MOMENTS_TITLE = "Constellation moments";
+const STARLIT_SWOON_LABEL = "Name a star";
+const STARLIT_SWOON_HEADLINE = "Yes, we are meant to be";
+const STARLIT_SWOON_BODY =
+  "Our story has always been written in the night sky—every choice, every orbit, every light leads back to you.";
+const STARLIT_SWOON_TAGS = [
+  "destiny",
+  "quiet glow",
+  "inevitable",
+  "aligned",
+];
+const STARLIT_PERK_CARDS: BuilderPerkCard[] = [
+  {
+    title: "First radiance",
+    body: "The day our eyes met felt like the brightest starburst.",
+  },
+  {
+    title: "Nebula whispers",
+    body: "Soft conversations that glow long after the night ends.",
+  },
+  {
+    title: "Orbit ritual",
+    body: "We keep coming back to the same constellations, always brighter.",
+  },
+  {
+    title: "Aurora pulse",
+    body: "Every shared dream adds a streak of light across a midnight canvas.",
+  },
+];
+const STARLIT_DATE_PLAN_TITLE = "Wish list";
+const STARLIT_DATE_PLAN_STEPS: BuilderPerkCard[] = [
+  {
+    title: "Trace our story",
+    body: "Pick a quiet rooftop or a spacious field, and name a star together.",
+  },
+  {
+    title: "Shared galaxies",
+    body: "Swap playlists that feel like cosmic maps of us.",
+  },
+  {
+    title: "Soft aurora",
+    body: "Let the night stretch as long as it needs to, with warm whispers and hand squeezes.",
+  },
+];
+const STARLIT_PROMISE_TITLE = "Orbit reasons";
+const STARLIT_PROMISE_ITEMS = [
+  "I will always point you toward the brightest nights.",
+  "Our love is a steady constellation across the seasons.",
+  "I promise to notice the tiny stars you are made of.",
+  "Your gravity keeps me grounded in the most beautiful orbit.",
+];
 const DEFAULT_PERK_CARDS: BuilderPerkCard[] = [
   {
     title: "Snack mission",
@@ -254,6 +306,15 @@ const themePresets: Record<TemplateId, Omit<BuilderTheme, "gradient" | "tagline"
     maxPhotos: DEFAULT_MAX_PHOTOS,
     photoUpsellPrice: DEFAULT_UPSELL_PRICE,
     defaultFont: "playful",
+  },
+  "starlit-constellations": {
+    card: "bg-slate-950/60",
+    text: "text-white",
+    mutedText: "text-slate-300",
+    accent: "text-sky-200",
+    maxPhotos: DEFAULT_MAX_PHOTOS,
+    photoUpsellPrice: DEFAULT_UPSELL_PRICE,
+    defaultFont: "soft",
   },
 };
 
@@ -409,6 +470,23 @@ export const getDefaultBuilderDoc = (templateId: TemplateId): BuilderDoc => {
       swoonHeadline: RETRO_SWOON_HEADLINE,
       promiseTitle: RETRO_PROMISE_TITLE,
       promiseItems: [...RETRO_PROMISE_ITEMS],
+    };
+  }
+
+  if (templateId === "starlit-constellations") {
+    return {
+      ...baseDoc,
+      tagline: "Name a star",
+      momentsTitle: STARLIT_MOMENTS_TITLE,
+      swoonLabel: STARLIT_SWOON_LABEL,
+      swoonHeadline: STARLIT_SWOON_HEADLINE,
+      swoonBody: STARLIT_SWOON_BODY,
+      swoonTags: [...STARLIT_SWOON_TAGS],
+      perkCards: STARLIT_PERK_CARDS.map((card) => ({ ...card })),
+      datePlanTitle: STARLIT_DATE_PLAN_TITLE,
+      datePlanSteps: STARLIT_DATE_PLAN_STEPS.map((step) => ({ ...step })),
+      promiseTitle: STARLIT_PROMISE_TITLE,
+      promiseItems: [...STARLIT_PROMISE_ITEMS],
     };
   }
 

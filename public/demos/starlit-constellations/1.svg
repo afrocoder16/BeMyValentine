@@ -1,0 +1,20 @@
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-hidden="true">
+  <defs>
+    <linearGradient id="grad-a" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#11112a" />
+      <stop offset="60%" stop-color="#1d1f47" />
+      <stop offset="100%" stop-color="#2b1e53" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#grad-a)" />
+  <g fill="#fefefe" opacity="0.9">
+    <circle cx="140" cy="120" r="2.5" />
+    <circle cx="220" cy="340" r="3" />
+    <circle cx="360" cy="200" r="1.8" />
+    <circle cx="520" cy="90" r="2.2" />
+    <circle cx="630" cy="380" r="3.5" />
+    <circle cx="720" cy="160" r="2" />
+  </g>
+  <circle cx="400" cy="300" r="110" fill="none" stroke="rgba(189, 200, 255, 0.3)" stroke-width="3" stroke-dasharray="8 6" />
+  <circle cx="480" cy="420" r="30" fill="rgba(255,255,255,0.15)" />
+</svg>

@@ -74,6 +74,20 @@ const demoCopyByTemplateId: Record<string, DemoCopy> = {
       "Our soundtrack stuck on repeat.",
     ],
   },
+  "starlit-constellations": {
+    title: "I'd name a star after you.",
+    intro:
+      "I traced our story across the night sky so you can feel how every moment glows together.",
+    loveNote:
+      "You are the steady constellation I follow - the glow that calms and the pull that never lets go. Let's keep orbiting toward every dream we share.",
+    cuteMoments: [
+      "The first look that felt like a supernova.",
+      "Holding hands beneath city lights that shimmered like stars.",
+      "Late-night whispers that felt like destiny aligning.",
+      "Playlists that always start with the same opening note.",
+      "Tiny rituals that prove we were meant to cross paths.",
+    ],
+  },
 };
 
 export const getDemoCopyByTemplateId = (id?: string | null) =>
