@@ -1159,16 +1159,17 @@ export default function StarlitConstellationsRenderer({
 
         @media (max-width: 640px) {
           .starlit-card {
+            position: relative;
             width: min(220px, 90vw);
+            left: 0;
+            top: 0;
+            margin: 0 auto;
+            transform: none;
           }
-          .starlit-card-left {
-            transform: translate(-80%, -45%);
-          }
-          .starlit-card-right {
-            transform: translate(45%, -45%);
-          }
+          .starlit-card-left,
+          .starlit-card-right,
           .starlit-card-top {
-            transform: translate(-50%, -90%);
+            transform: none;
           }
         }
 
