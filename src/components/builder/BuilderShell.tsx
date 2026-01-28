@@ -17,6 +17,7 @@ type BuilderShellProps = {
   preview: React.ReactNode;
   activeTab: "edit" | "preview";
   onTabChange: (tab: "edit" | "preview") => void;
+  publishMeta?: React.ReactNode;
 };
 
 export default function BuilderShell({
@@ -32,6 +33,7 @@ export default function BuilderShell({
   preview,
   activeTab,
   onTabChange,
+  publishMeta,
 }: BuilderShellProps) {
   return (
     <main className="min-h-screen overflow-y-auto lg:h-screen lg:overflow-hidden">
@@ -84,14 +86,21 @@ export default function BuilderShell({
                 <span className="hidden sm:inline">Phone</span>
               </button>
             </div>
-            <button
-              type="button"
-              onClick={onPublish}
-              disabled={publishDisabled}
-              className="rounded-full bg-rose-600 px-5 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-rose-500 disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {publishLabel}
-            </button>
+            <div className="flex flex-col items-end gap-1">
+              {publishMeta ? (
+                <span className="text-xs uppercase tracking-[0.3em] text-slate-500">
+                  {publishMeta}
+                </span>
+              ) : null}
+              <button
+                type="button"
+                onClick={onPublish}
+                disabled={publishDisabled}
+                className="rounded-full bg-rose-600 px-5 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-rose-500 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {publishLabel}
+              </button>
+            </div>
           </div>
         </header>
 

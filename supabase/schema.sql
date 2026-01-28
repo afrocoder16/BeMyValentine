@@ -51,3 +51,40 @@ create table if not exists public.pending_publishes (
 create index if not exists pending_publishes_session_idx on public.pending_publishes (stripe_session_id);
 
 alter table public.pending_publishes enable row level security;
+
+create table if not exists public.publish_usage (
+  client_id text primary key,
+  publish_count int not null default 0,
+  updated_at timestamp with time zone not null default now()
+);
+
+alter table public.publish_usage enable row level security;
+
+create function public.increment_publish_count_if_under_limit(
+  p_client_id text,
+  p_limit int
+) returns table (publish_count int, allowed boolean) language plpgsql as $$
+begin
+  insert into public.publish_usage (client_id)
+    values (p_client_id)
+    on conflict (client_id) do nothing;
+
+  update public.publish_usage
+  set publish_count = publish_count + 1,
+      updated_at = now()
+  where client_id = p_client_id and publish_count < p_limit
+  returning publish_count into publish_count;
+
+  if found then
+    allowed := true;
+    return;
+  end if;
+
+  select publish_count into publish_count
+  from public.publish_usage
+  where client_id = p_client_id;
+
+  allowed := false;
+  return;
+end;
+$$;

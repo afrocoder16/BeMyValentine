@@ -49,6 +49,10 @@ export default function BuildTemplatePage() {
   const [showPublishModal, setShowPublishModal] = useState(false);
   const [publishSlug, setPublishSlug] = useState<string | null>(null);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [clientId, setClientId] = useState<string | null>(null);
+  const [publishCount, setPublishCount] = useState(0);
+  const [publishLimitModalOpen, setPublishLimitModalOpen] = useState(false);
+  const [limitPublishCount, setLimitPublishCount] = useState(0);
   const toastTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -83,6 +87,28 @@ export default function BuildTemplatePage() {
       }
       Object.values(timers).forEach(clearTimeout);
     };
+  }, []);
+
+  useEffect(() => {
+    const id = getClientId();
+    if (!id) {
+      return;
+    }
+    setClientId(id);
+    const fetchUsage = async () => {
+      try {
+        const response = await fetch("/api/publish/usage");
+        const payload = (await response.json().catch(() => ({}))) as {
+          publishCount?: number;
+        };
+        if (response.ok && typeof payload.publishCount === "number") {
+          setPublishCount(payload.publishCount);
+        }
+      } catch {
+        // ignore
+      }
+    };
+    void fetchUsage();
   }, []);
 
   const addToast = (message: string) => {
@@ -160,6 +186,15 @@ export default function BuildTemplatePage() {
       return;
     }
 
+    const id = clientId ?? getClientId();
+    if (!id) {
+      addToast("Unable to identify this device. Please refresh.");
+      return;
+    }
+    if (!clientId) {
+      setClientId(id);
+    }
+
     setIsPublishing(true);
     try {
       const response = await fetch("/api/publish", {
@@ -168,19 +203,31 @@ export default function BuildTemplatePage() {
         body: JSON.stringify({
           templateId,
           doc,
+          clientId: id,
         }),
       });
       const payload = (await response.json().catch(() => ({}))) as {
         slug?: string;
         message?: string;
+        publishCount?: number;
+        limit?: number;
+        error?: string;
       };
       if (!response.ok) {
+        if (payload.error === "publish_limit_reached") {
+          setLimitPublishCount(payload.publishCount ?? payload.limit ?? 3);
+          setPublishLimitModalOpen(true);
+          return;
+        }
         addToast(payload.message ?? "Publish failed. Try again.");
         return;
       }
       if (!payload.slug) {
         addToast("Publish failed. Missing share link.");
         return;
+      }
+      if (typeof payload.publishCount === "number") {
+        setPublishCount(payload.publishCount);
       }
       setPublishSlug(payload.slug);
       setShowPublishModal(true);
@@ -226,6 +273,7 @@ export default function BuildTemplatePage() {
         publishDisabled={isPublishing}
         activeTab={activeTab}
         onTabChange={setActiveTab}
+        publishMeta={`Publishes left: ${Math.max(0, 3 - publishCount)}/3`}
         editor={
           <EditorPanel
             doc={doc}
@@ -313,6 +361,42 @@ export default function BuildTemplatePage() {
             >
               Close
             </button>
+          </div>
+        </div>
+      ) : null}
+
+      {publishLimitModalOpen ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 px-6">
+          <div className="w-full max-w-sm rounded-[2rem] bg-white p-6 text-center shadow-soft">
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-400">
+              Limit reached
+            </p>
+            <h2 className="mt-4 font-display text-2xl text-slate-900">
+              You’ve reached your 3 free publishes
+            </h2>
+            <p className="mt-3 text-sm text-slate-600">
+              This project is free to use. If it made someone smile, you can support it to keep it alive.
+            </p>
+            <p className="mt-2 text-xs text-slate-400">
+              Limit resets only if you clear browser data.
+            </p>
+            <div className="mt-6 flex flex-col gap-3">
+              <a
+                href={SUPPORT_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={buttonClasses("primary")}
+              >
+                Support with coffee ☕
+              </a>
+              <button
+                type="button"
+                onClick={() => setPublishLimitModalOpen(false)}
+                className={buttonClasses("ghost")}
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       ) : null}
