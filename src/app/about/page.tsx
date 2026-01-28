@@ -23,9 +23,6 @@ export default function AboutPage() {
         </div>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link href="/templates" className={buttonClasses("primary")}>
-            Browse templates
-          </Link>
-          <Link href="/build/cute-classic" className={buttonClasses("outline")}>
             Start building
           </Link>
         </div>

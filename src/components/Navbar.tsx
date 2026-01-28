@@ -6,7 +6,6 @@ import { buttonClasses } from "@/components/Button";
 
 const navLinks = [
   { href: "/templates", label: "Templates" },
-  { href: "/pricing", label: "Pricing" },
   { href: "/about", label: "About" },
   { href: "/faq", label: "FAQ" },
 ];
@@ -44,7 +43,7 @@ export default function Navbar() {
             );
           })}
         </nav>
-        <Link href="/build/cute-classic" className={buttonClasses("outline")}>
+        <Link href="/templates" className={buttonClasses("outline")}>
           Start building
         </Link>
       </div>

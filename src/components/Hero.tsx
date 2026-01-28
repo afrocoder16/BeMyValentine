@@ -251,16 +251,10 @@ export default function Hero() {
 
             <div className="flex flex-wrap gap-3">
               <Link
-                href="/build"
+                href="/templates"
                 className="inline-flex items-center justify-center rounded-full bg-[var(--btn)] px-6 py-3 text-sm font-semibold uppercase tracking-[0.3em] text-white shadow-lg transition hover:bg-[var(--btnHover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--btn)]"
               >
                 Start building
-              </Link>
-              <Link
-                href="/templates"
-                className="inline-flex items-center justify-center rounded-full border border-white/70 px-6 py-3 text-sm font-semibold uppercase tracking-[0.3em] text-[var(--ink)] transition hover:bg-white/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ink)]"
-              >
-                Browse templates
               </Link>
             </div>
 
