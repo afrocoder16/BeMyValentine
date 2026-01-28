@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { buttonClasses } from "@/components/Button";
+import { SUPPORT_URL } from "@/config/constants";
 import { getBuilderTheme } from "@/lib/builder/config";
 import { coerceBuilderDoc } from "@/lib/builder/storage";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
@@ -121,7 +122,15 @@ export default async function RecipientPage({ params }: RecipientPageProps) {
         <Renderer doc={doc} theme={theme} mode="desktop" context="published" />
       </div>
       <footer className="relative pb-10 text-center text-xs uppercase tracking-[0.3em] text-white/80">
-        Made with BeMyValentine
+        <span>Made with BeMyValentine • </span>
+        <a
+          href={SUPPORT_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-white/70 underline-offset-4 transition hover:text-white"
+        >
+          Support the creator ☕
+        </a>
       </footer>
     </main>
   );

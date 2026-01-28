@@ -20,6 +20,7 @@ import {
   saveBuilderDoc,
 } from "@/lib/builder/storage";
 import { getTemplateRenderer } from "@/templates/renderers";
+import { SUPPORT_URL } from "@/config/constants";
 
 const AUTOSAVE_DELAY_MS = 600;
 const TOAST_DURATION_MS = 10000;
@@ -285,6 +286,14 @@ export default function BuildTemplatePage() {
               >
                 Copy link
               </button>
+              <a
+                href={SUPPORT_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={buttonClasses("outline")}
+              >
+                ☕ Buy me a coffee
+              </a>
               <Link
                 href={shareUrl || "#"}
                 target="_blank"

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { aboutContent } from "@/content/about";
 import { buttonClasses } from "@/components/Button";
 import CuteThings from "@/components/CuteThings";
+import { SUPPORT_URL } from "@/config/constants";
 
 export default function AboutPage() {
   const { hero, howItWorks, timeline, dateIdeas, cuteThings } = aboutContent;
@@ -28,6 +29,28 @@ export default function AboutPage() {
             Start building
           </Link>
         </div>
+      </section>
+
+      <section className="mt-16 rounded-[3rem] bg-white/70 px-8 py-10 shadow-soft md:px-12">
+        <h2 className="font-display text-3xl text-slate-900">
+          Support the project
+        </h2>
+        <p className="mt-3 text-sm text-slate-600">
+          This page is free. If it made someone smile, you can support the creator.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <a
+            href={SUPPORT_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={buttonClasses("primary")}
+          >
+            ☕ Buy me a coffee
+          </a>
+        </div>
+        <p className="mt-3 text-xs text-slate-500">
+          Voluntary tip. The Valentine page is completely free.
+        </p>
       </section>
 
       <section className="mt-16">
