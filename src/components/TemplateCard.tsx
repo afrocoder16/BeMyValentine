@@ -17,7 +17,7 @@ export default function TemplateCard({
         <div
           className="h-44 w-full rounded-[calc(1.5rem+0px)]"
           style={{
-            backgroundImage: template.theme.background,
+            backgroundImage: template.theme.cardBackground,
             backgroundSize: "cover",
           }}
         />

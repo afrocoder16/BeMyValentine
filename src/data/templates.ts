@@ -23,7 +23,8 @@ export type Template = {
     };
   };
   theme: {
-    background: string;
+    gradient: string;
+    cardBackground: string;
   };
 };
 
@@ -42,7 +43,8 @@ const templates: Template[] = [
       ],
     },
     theme: {
-      background:
+      gradient: "from-rose-200 via-pink-100 to-amber-100",
+      cardBackground:
         "linear-gradient(135deg, rgba(252, 165, 191, 0.95), rgba(255, 232, 181, 0.6))",
     },
   },
@@ -60,7 +62,8 @@ const templates: Template[] = [
       ],
     },
     theme: {
-      background:
+      gradient: "from-slate-900 via-slate-700 to-rose-500",
+      cardBackground:
         "linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(59, 130, 246, 0.35))",
     },
   },
@@ -78,7 +81,8 @@ const templates: Template[] = [
       ],
     },
     theme: {
-      background:
+      gradient: "from-amber-200 via-orange-200 to-rose-200",
+      cardBackground:
         "linear-gradient(135deg, rgba(253, 224, 71, 0.9), rgba(255, 249, 196, 0.8))",
     },
   },
@@ -96,7 +100,8 @@ const templates: Template[] = [
       ],
     },
     theme: {
-      background:
+      gradient: "from-emerald-200 via-rose-200 to-amber-100",
+      cardBackground:
         "linear-gradient(135deg, rgba(110, 231, 183, 0.9), rgba(34, 197, 94, 0.35))",
     },
   },
@@ -114,7 +119,8 @@ const templates: Template[] = [
       ],
     },
     theme: {
-      background:
+      gradient: "from-amber-300 via-rose-300 to-fuchsia-300",
+      cardBackground:
         "linear-gradient(135deg, rgba(124, 58, 237, 0.85), rgba(236, 72, 153, 0.45))",
     },
   },
@@ -139,7 +145,8 @@ const templates: Template[] = [
       },
     },
     theme: {
-      background:
+      gradient: "from-slate-900 via-indigo-950 to-purple-700",
+      cardBackground:
         "linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(129, 140, 248, 0.45))",
     },
   },
