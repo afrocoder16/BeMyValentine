@@ -40,6 +40,9 @@ const greatVibes = Great_Vibes({
 export const metadata: Metadata = {
   title: "BeMyValentine",
   description: "Create a Valentine page in minutes and share it instantly.",
+  verification: {
+    google: "fzbO1uEwuvsXAsEVXNi7AKqhg37ILWdTv-TAvxC2si4",
+  },
 };
 
 export default function RootLayout({

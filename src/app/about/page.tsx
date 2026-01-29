@@ -50,6 +50,22 @@ export default function AboutPage() {
         </p>
       </section>
 
+      <section className="mt-8 rounded-[3rem] border border-rose-100 bg-gradient-to-br from-rose-50/80 to-amber-50/70 p-8 shadow-inner md:mt-10">
+        <p className="text-lg font-light text-slate-600">
+          Want a one-of-a-kind experience or a custom design made just for you?
+        </p>
+        <p className="mt-2 text-2xl font-semibold text-slate-900">
+          Send me a message at{" "}
+          <a
+            className="text-rose-500 underline decoration-2 decoration-rose-200 transition hover:text-rose-600"
+            href="mailto:samtadesse16@gmail.com"
+          >
+            samtadesse16@gmail.com
+          </a>{" "}
+          and let’s create it.
+        </p>
+      </section>
+
       <section className="mt-16">
         <h2 className="font-display text-3xl text-slate-900">
           {howItWorks.title}
